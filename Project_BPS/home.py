@@ -72,7 +72,7 @@ map1, map2 = st.columns([5, 2])
 kanan = map2
 kiri = map1
 
-geojson_file = 'Wilkerstat/Project_BPS/Geolocation/kabupaten.geojson'
+geojson_file = 'Project_BPS/Geolocation/kabupaten.geojson'
 key_on = 'KABKOTNO'
 popup_fields = ['KABKOT']
 
