@@ -130,7 +130,7 @@ with col1:
 
     df_uploaded = fetch_uploaded_data()
 
-    geojson_file = 'Geolocation/kabupaten.geojson'
+    geojson_file = 'Project_BPS/Geolocation/kabupaten.geojson'
     try:
         gdf = gpd.read_file(geojson_file)
     except Exception as e:
