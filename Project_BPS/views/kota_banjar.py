@@ -153,6 +153,10 @@ with col1:
         marker_cluster = MarkerCluster(name="Lokasi Petugas").add_to(m)
         df_uploaded.dropna(subset=['Latitude', 'Longitude'], inplace=True)
 
+        marker_cluster = MarkerCluster(name="Lokasi Petugas").add_to(m)
+
+        df_uploaded.dropna(subset=['Latitude', 'Longitude'], inplace=True)
+
         for idx, row in df_uploaded.iterrows():
             try:
                 lat = float(row['Latitude']); lon = float(row['Longitude'])
