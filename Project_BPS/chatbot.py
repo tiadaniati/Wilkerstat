@@ -10,6 +10,19 @@ import re
 
 load_dotenv()
 
+try:
+    st.write("Cek data:", db.run("SELECT * FROM kota_banjar LIMIT 3"))
+except Exception as e:
+    st.error(f"Gagal menjalankan query test: {e}")
+
+if st.sidebar.button("Cek Koneksi Database"):
+    try:
+        test = db.run("SELECT COUNT(*) FROM uploaded_kota_banjar")
+        st.sidebar.success("Koneksi berhasil! Jumlah data: " + str(test[0][0]))
+    except Exception as e:
+        st.sidebar.error(f"Koneksi gagal: {e}")
+
+
 APPLICATION_CONTEXT = """
 Anda adalah AI yang membantu menganalisis data monitoring Sensus Ekonomi 2026 untuk Kota Banjar.
 Berikut adalah konteks tentang tabel dalam database:
