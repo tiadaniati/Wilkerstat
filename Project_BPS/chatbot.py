@@ -46,13 +46,9 @@ Contoh Pertanyaan dan Kueri yang Diharapkan:
 
 @st.cache_resource
 def get_database_connection():
-    """Menggunakan st.connection untuk koneksi yang konsisten dengan aplikasi utama."""
     try:
-
         db_conn = st.connection("mysql", type="sql")
-
         db = SQLDatabase(engine=db_conn.engine)
-
         return db
     except Exception as e:
         st.error(f"Kesalahan saat menghubungkan ke MySQL melalui st.connection: {e}")
@@ -64,20 +60,14 @@ try:
     st.write("Cek data:", db.run("SELECT * FROM kota_banjar LIMIT 3"))
 except Exception as e:
     st.error(f"Gagal menjalankan query test: {e}")
-    
 
 @st.cache_resource
 def get_llm():
-    """Inisialisasi model LLM dari Google Gemini."""
     try:
-
         api_key = st.secrets.get("GOOGLE_API_KEY", os.getenv("GOOGLE_API_KEY"))
-        
         if not api_key:
             st.error("GOOGLE_API_KEY tidak ditemukan :((")
             st.stop()
-        
-
         llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0, google_api_key=api_key)
         return llm
     except Exception as e:
@@ -86,10 +76,8 @@ def get_llm():
 
 llm = get_llm()
 
-
 def get_schema(_):
     return db.get_table_info()
-
 
 sql_query_generation_template = """Berdasarkan skema tabel dan konteks aplikasi di bawah ini, tulis satu kueri SQL yang akan menjawab pertanyaan pengguna.
 Hanya hasilkan kueri SQL dan tidak ada yang lain.
@@ -116,7 +104,6 @@ sql_chain = (
 )
 
 def run_query(query: str) -> str:
-    """Membersihkan, menjalankan kueri SQL, dan menangani error."""
     cleaned_query = query.strip()
     match = re.search(r"```sql\s*(.*?)\s*```", cleaned_query, re.DOTALL)
     if match:
@@ -155,7 +142,6 @@ final_answer_prompt = ChatPromptTemplate.from_template(final_answer_template)
 
 @st.cache_resource
 def get_full_chatbot_chain():
-    """Membangun chain lengkap dari pertanyaan hingga jawaban akhir."""
     return (
         RunnablePassthrough.assign(
             query=sql_chain 
@@ -172,20 +158,16 @@ def get_full_chatbot_chain():
 
 full_chatbot_chain = get_full_chatbot_chain()
 
-
 st.set_page_config(page_title="Chatbot Wilkerstat", layout="centered", page_icon="💬")
 st.title("Chatbot Wilkerstat 💬")
 st.markdown("Tanyakan apa saja tentang data Wilkerstat Kota Banjar!")
 
-
 if "messages" not in st.session_state:
     st.session_state.messages = []
-
 
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
-
 
 if prompt := st.chat_input("Contoh: Berapa persen SLS yang sudah sukses?"):
     st.session_state.messages.append({"role": "user", "content": prompt})
@@ -195,9 +177,7 @@ if prompt := st.chat_input("Contoh: Berapa persen SLS yang sudah sukses?"):
     with st.chat_message("assistant"):
         with st.spinner("Sedang berpikir... 🧠"):
             try:
-                response = full_chatbot_chain.invoke({
-                    "question": prompt
-                })
+                response = full_chatbot_chain.invoke({"question": prompt})
                 st.markdown(response)
                 st.session_state.messages.append({"role": "assistant", "content": response})
             except Exception as e:
