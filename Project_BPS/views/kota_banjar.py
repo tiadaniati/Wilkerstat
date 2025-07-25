@@ -102,7 +102,7 @@ with col2:
     elif fl is None and st.session_state['uploaded_df'] is None:
         st.info("📔 Menampilkan data template default karena belum ada file diunggah.")
         try:
-            df = pd.read_csv(r"dataset/template_data2.csv")
+            df = pd.read_csv(r"Project_BPS/dataset/template_data2.csv")
             st.dataframe(df, height=300)
             st.session_state['uploaded_df'] = df
         except FileNotFoundError:
@@ -209,9 +209,9 @@ def metric_card(title, value):
 stat1, stat2, stat3 = st.columns((2, 3, 3))
 
 try:
-    df_banjar_csv = pd.read_csv("dataset/kota_banjar.csv")
+    df_banjar_csv = pd.read_csv("Project_BPS/dataset/kota_banjar.csv")
 except FileNotFoundError:
-    st.error("File referensi 'kota_banjar.csv' tidak ditemukan. Statistik tidak dapat ditampilkan.")
+    st.error("File referensi tidak ditemukan. Statistik tidak dapat ditampilkan.")
     st.stop()
 
 if not df_uploaded.empty:
