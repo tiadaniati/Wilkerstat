@@ -102,7 +102,7 @@ with col2:
     elif fl is None and st.session_state['uploaded_df'] is None:
         st.info("📔 Menampilkan data template default karena belum ada file diunggah.")
         try:
-            df = pd.read_csv(r"/Users/jibrilnikki/Documents/Code/Project_BPS/dataset/template_data2.csv")
+            df = pd.read_csv(r"dataset/template_data2.csv")
             st.dataframe(df, height=300)
             st.session_state['uploaded_df'] = df
         except FileNotFoundError:
@@ -130,7 +130,7 @@ with col1:
 
     df_uploaded = fetch_uploaded_data()
 
-    geojson_file = '/Users/jibrilnikki/Documents/Code/Project_BPS/Geolocation/kabupaten.geojson'
+    geojson_file = 'Geolocation/kabupaten.geojson'
     try:
         gdf = gpd.read_file(geojson_file)
     except Exception as e:
@@ -197,7 +197,7 @@ df_filtered_uploaded = df3 if not sls else df3[df3['Nama SLS'].isin(sls)]
 st.dataframe(df_filtered_uploaded, height=250)
 
 #=========================================================================
-#Metric card statistik & SQL Section (Struktur Asli Dipertahankan)
+#Metric card statistik & SQL Section
 #=========================================================================
 def metric_card(title, value):
     return f"""
@@ -209,7 +209,7 @@ def metric_card(title, value):
 stat1, stat2, stat3 = st.columns((2, 3, 3))
 
 try:
-    df_banjar_csv = pd.read_csv("/Users/jibrilnikki/Documents/Code/Project_BPS/dataset/kota_banjar.csv")
+    df_banjar_csv = pd.read_csv("dataset/kota_banjar.csv")
 except FileNotFoundError:
     st.error("File referensi 'kota_banjar.csv' tidak ditemukan. Statistik tidak dapat ditampilkan.")
     st.stop()
