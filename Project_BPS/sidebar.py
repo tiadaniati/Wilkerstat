@@ -9,10 +9,10 @@ warnings.filterwarnings("ignore")
 #=========================================================================
 #background dan sidebar
 
-home_page = st.Page("home.py",title="Home", icon="🏠", default=True)
-kota_banjar = st.Page("views/kota_banjar.py",title="Kota Banjar", icon="🌳")
+home_page = st.Page("Wilkerstat/home.py",title="Home", icon="🏠", default=True)
+kota_banjar = st.Page("Wilkerstat/Project_BPS/views/kota_banjar.py",title="Kota Banjar", icon="🌳")
 
-chatbot_page = st.Page("chatbot.py",icon="👨‍🏫",title="Chatbot")
+chatbot_page = st.Page("Wilkerstat/chatbot.py",icon="👨‍🏫",title="Chatbot")
 semua_lokasi = {
     "Kota Banjar": kota_banjar
 }
@@ -29,8 +29,8 @@ pg = st.navigation(
 
 #=========================================================================
 #Footnote sidebar
-st.logo(r"asset/logo_bps.png")
-st.sidebar.image(r"asset/wilkerstat3fix.png")
+st.logo(r"Wilkerstat/Project_BPS/asset/logo_bps.png")
+st.sidebar.image(r"Wilkerstat/Project_BPSasset/wilkerstat3fix.png")
 st.sidebar.text("© 2025")
 pg.run()
 #=========================================================================
