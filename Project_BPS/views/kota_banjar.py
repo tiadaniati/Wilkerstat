@@ -131,6 +131,7 @@ with col1:
     df_uploaded = fetch_uploaded_data()
 
     geojson_file = 'Project_BPS/Geolocation/kabupaten.geojson'
+    @st.cache_data(ttl=3600) 
     try:
         gdf = gpd.read_file(geojson_file)
     except Exception as e:
@@ -221,13 +222,12 @@ else:
 
 
 st.title("Database Kota Banjar")
-
-df_ref = df_banjar_csv.copy()
-df_ref = df_ref.rename(columns={'iddesa': 'Kode Wilayah Desa', 'nmsls': 'Nama SLS'})
+@st.cache_data(ttl=3600)
+df_banjar_csv = df_banjar_csv.rename(columns={'iddesa': 'Kode Wilayah Desa', 'nmsls': 'Nama SLS'})
 
 
 try:
-    df_ref.to_sql("kota_banjar", con=conn_st.engine, if_exists="replace", index=False, dtype={
+    df_banjar_csv.to_sql("kota_banjar", con=conn_st.engine, if_exists="replace", index=False, dtype={
         'idsubsls': sql_types.VARCHAR(20), 'iddesa': sql_types.VARCHAR(20), 'kdprov': sql_types.VARCHAR(10),
         'nmprov': sql_types.VARCHAR(100), 'kdkab': sql_types.VARCHAR(10), 'nmkab': sql_types.VARCHAR(100),
         'kdkec': sql_types.VARCHAR(10), 'nmkec': sql_types.VARCHAR(100), 'kddesa': sql_types.VARCHAR(10),
