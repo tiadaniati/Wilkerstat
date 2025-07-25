@@ -19,7 +19,7 @@ st.set_page_config(page_title="Monitoring Wilkerstat SE", page_icon=":bar_chart:
 st.markdown('<style>div.block-container{padding-left:5rem; padding-top:5rem;}</style>', unsafe_allow_html=True)
 
 try:
-    image = Image.open(r"Wilkerstat/Project_BPS/asset/orangfix.png")
+    image = Image.open(r"Project_BPS/asset/orangfix.png")
     col1_img, col2_title = st.columns([0.5, 4])
     with col1_img:
         st.image(image, width=200)
