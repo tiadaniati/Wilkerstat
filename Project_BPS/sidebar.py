@@ -29,7 +29,7 @@ pg = st.navigation(
 
 #=========================================================================
 #Footnote sidebar
-st.logo(r"Wilkerstat/Project_BPS/asset/logo_bps.png")
+st.logo(r"/asset/logo_bps.png")
 st.sidebar.image(r"Wilkerstat/Project_BPSasset/wilkerstat3fix.png")
 st.sidebar.text("© 2025")
 pg.run()
