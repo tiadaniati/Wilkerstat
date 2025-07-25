@@ -65,11 +65,11 @@ def get_llm():
     """Inisialisasi model LLM dari Google Gemini."""
     try:
 
-      api_key = st.secrets.get("GOOGLE_API_KEY", os.getenv("GOOGLE_API_KEY"))
-      
-      if not api_key:
-          st.error("GOOGLE_API_KEY tidak ditemukan :((")
-          st.stop()
+        api_key = st.secrets.get("GOOGLE_API_KEY", os.getenv("GOOGLE_API_KEY"))
+        
+        if not api_key:
+            st.error("GOOGLE_API_KEY tidak ditemukan :((")
+            st.stop()
         
 
         llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0, google_api_key=api_key)
