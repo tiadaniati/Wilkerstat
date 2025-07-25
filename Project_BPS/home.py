@@ -43,7 +43,7 @@ conn_st = get_db_connection()
 # INITIAL DATA LOADING & METRICS
 #=========================================================================
 try:
-    df_prov = pd.read_csv('Wilkerstat/Project_BPS/dataset/data_provinsi.csv')
+    df_prov = pd.read_csv('Project_BPS/dataset/data_provinsi.csv')
     
     def metric_card(title, value):
         return f"""
