@@ -118,7 +118,7 @@ if 'uploaded_df' in st.session_state and st.session_state['uploaded_df'] is not 
 with col1:
     st.header("Peta Lokasi")
     
-    @st.cache_data(ttl=600)
+    @st.cache_data(ttl=3600)
     def fetch_uploaded_data():
         """Fetches uploaded location data from the database."""
         try:
