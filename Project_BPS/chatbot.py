@@ -56,11 +56,6 @@ def get_database_connection():
 
 db = get_database_connection()
 
-try:
-    st.write("Cek data:", db.run("SELECT * FROM kota_banjar LIMIT 3"))
-except Exception as e:
-    st.error(f"Gagal menjalankan query test: {e}")
-
 @st.cache_resource
 def get_llm():
     try:
@@ -160,7 +155,7 @@ full_chatbot_chain = get_full_chatbot_chain()
 
 st.set_page_config(page_title="Chatbot Wilkerstat", layout="centered", page_icon="💬")
 st.title("Chatbot Wilkerstat 💬")
-st.markdown("Tanyakan apa saja tentang data Wilkerstat Kota Banjar!")
+st.markdown("Tanyakan apa saja tentang data Wilkerstat!")
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -175,7 +170,7 @@ if prompt := st.chat_input("Contoh: Berapa persen SLS yang sudah sukses?"):
         st.markdown(prompt)
 
     with st.chat_message("assistant"):
-        with st.spinner("Sedang berpikir... 🧠"):
+        with st.spinner("Sedang berpikir..."):
             try:
                 response = full_chatbot_chain.invoke({"question": prompt})
                 st.markdown(response)
