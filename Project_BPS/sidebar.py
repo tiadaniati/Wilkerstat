@@ -9,8 +9,8 @@ warnings.filterwarnings("ignore")
 #=========================================================================
 #background dan sidebar
 
-home_page = st.Page("Wilkerstat/Project_BPS/home.py",title="Home", icon="🏠", default=True)
-kota_banjar = st.Page("Wilkerstat/Project_BPS/views/kota_banjar.py",title="Kota Banjar", icon="🌳")
+home_page = st.Page("home.py",title="Home", icon="🏠", default=True)
+kota_banjar = st.Page("views/kota_banjar.py",title="Kota Banjar", icon="🌳")
 
 chatbot_page = st.Page("Wilkerstat/chatbot.py",icon="👨‍🏫",title="Chatbot")
 semua_lokasi = {
