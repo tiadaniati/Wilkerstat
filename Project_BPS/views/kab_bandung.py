@@ -112,7 +112,7 @@ with col2:
     elif fl is None and st.session_state['uploaded_df'] is None:
         st.info("📔 Menampilkan data template default karena belum ada file diunggah.")
         try:
-            df = pd.read_csv(r"Project_BPS/dataset/template_data2.csv")
+            df = pd.read_excel(r"Project_BPS/dataset/data_input.xlsx")
             st.dataframe(df, height=300)
             st.session_state['uploaded_df'] = df
         except FileNotFoundError:
@@ -128,7 +128,6 @@ if 'uploaded_df' in st.session_state and st.session_state['uploaded_df'] is not 
 with col1:
     st.header("Peta Lokasi")
     
-    @st.cache_data(ttl=3600)
     def fetch_uploaded_data():
         """Fetches uploaded location data from the database."""
         try:
