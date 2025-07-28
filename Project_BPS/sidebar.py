@@ -38,9 +38,30 @@ kota_tasikmalaya = st.Page("views/kota_tasikmalaya.py",title="Kota Tasikmalaya",
 
 chatbot_page = st.Page("chatbot.py",icon="👨‍🏫",title="Chatbot")
 semua_lokasi = {
-    "Kota Banjar": kota_banjar,
+    "Kabupaten Bogor": kab_bogor,
+    "Kabupaten Sukabumi": kab_sukabumi,
+    "Kabupaten Cianjur": kab_cianjur,
     "Kabupaten Bandung": kab_bandung,
-    "Kabupaten Ciamis": kab_ciamis
+    "Kabupaten Garut": kab_garut,
+    "Kabupaten Tasikmalaya": kab_tasikmalaya,
+    "Kabupaten Ciamis": kab_ciamis,
+    "Kabupaten Kuningan": kab_kuningan,
+    "Kabupaten Cirebon": kab_cirebon,
+    "Kabupaten Majalengka": kab_majalengka,
+    "Kabupaten Sumedang": kab_sumedang,
+    "Kabupaten Indramayu": kab_indramayu,
+    "Kabupaten Subang": kab_subang,
+    "Kabupaten Purwakarta": kab_purwakarta,
+    "Kabupaten Karawang": kab_karawang,
+    "Kabupaten Bekasi": kab_bekasi,
+    "Kabupaten Bandung Barat": kab_bandungbarat,
+    "Kota Bogor": kota_bogor,
+    "Kota Sukabumi": kota_sukabumi,
+    "Kota Bandung": kota_bandung,
+    "Kota Bekasi": kota_bekasi,
+    "Kota Depok": kota_depok,
+    "Kota Tasikmalaya": kota_tasikmalaya,
+    "Kota Banjar": kota_banjar
 }
 query = st.sidebar.text_input("Cari Wilayah:","")
 filter_lokasi = {k:v for k,v in semua_lokasi.items() if query.lower() in k.lower()}
