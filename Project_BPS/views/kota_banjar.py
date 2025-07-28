@@ -149,7 +149,7 @@ with col1:
             style_function=lambda feature: {
                 'fillColor': 'blue', 'color': 'black', 'weight': 0.9, 'fillOpacity': 0
             },
-            tooltip=folium.features.GeoJsonTooltip(fields=['KABKOT'])
+            tooltip=folium.features.GeoJsonTooltip(fields=['nmkab', 'nmkec'])
         ).add_to(m)
 
     if not df_uploaded.empty:
