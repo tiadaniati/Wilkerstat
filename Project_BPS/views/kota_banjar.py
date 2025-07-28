@@ -130,14 +130,18 @@ with col1:
 
     df_uploaded = fetch_uploaded_data()
 
-    geojson_file = 'Project_BPS/Geolocation/kabupaten.geojson'
+    geojson_file = 'Project_BPS/Geolocation/map_bps.geojson'
     try:
         gdf = gpd.read_file(geojson_file)
     except Exception as e:
         st.error(f"⚠️ Gagal membaca file GeoJSON: {e}.")
         gdf = gpd.GeoDataFrame() 
 
-    m = folium.Map(location=[-7.374585, 108.558189], tiles='OpenStreetMap', zoom_start=13)
+        m = folium.Map(
+            location=[-7.374585, 108.558189],
+            zoom_start=13,
+            tiles='OpenStreetMap'
+        )
 
     if not gdf.empty:
         folium.GeoJson(
@@ -226,10 +230,18 @@ else:
 
 st.title("Database Kota Banjar")
 
-df_banjar_csv = df_banjar_csv.rename(columns={'iddesa': 'Kode Wilayah Desa', 'nmsls': 'Nama SLS'})
+df_ref = df_banjar_csv.copy()
+
+kolom_kode = ['idsubsls', 'iddesa', 'kdprov', 'kdkab', 'kdkec', 'kddesa', 'kdsls']
+for kolom in kolom_kode:
+    if kolom in df_ref.columns:
+        df_ref[kolom] = df_ref[kolom].astype(str)
+        
+for kolom in ['kdkec', 'kddesa', 'kdsls']:
+    df_ref[kolom] = df_ref[kolom].str.zfill(3)
 
 try:
-    df_banjar_csv.to_sql("kota_banjar", con=conn_st.engine, if_exists="replace", index=False, dtype={
+    df_ref.to_sql("kota_banjar", con=conn_st.engine, if_exists="replace", index=False, dtype={
         'idsubsls': sql_types.VARCHAR(20), 'iddesa': sql_types.VARCHAR(20), 'kdprov': sql_types.VARCHAR(10),
         'nmprov': sql_types.VARCHAR(100), 'kdkab': sql_types.VARCHAR(10), 'nmkab': sql_types.VARCHAR(100),
         'kdkec': sql_types.VARCHAR(10), 'nmkec': sql_types.VARCHAR(100), 'kddesa': sql_types.VARCHAR(10),
@@ -256,28 +268,59 @@ except Exception as e:
 df['Kode Wilayah Desa'] = df['Kode Wilayah Desa'].astype(str)
 landmark['Kode Wilayah Desa'] = landmark['Kode Wilayah Desa'].astype(str)
 
+df['Kode Wilayah Desa'] = df['Kode Wilayah Desa'].astype(str)
+landmark['Kode Wilayah Desa'] = landmark['Kode Wilayah Desa'].astype(str)
+
 df_merged = pd.merge(df, landmark, on=['Kode Wilayah Desa', 'Nama SLS'], how='left')
 df_merged['total_landmark'] = df_merged['total_landmark'].fillna(0)
 df_merged = df_merged.rename(columns={'total_landmark':'Total Landmark'})
+
+df_merged['Kecamatan'] = ' [' + df_merged['Kode Kecamatan'].astype(str) + ']' + ' '+ df_merged['Nama Kecamatan'].astype(str)
+df_merged['Kabupaten/Kota'] = ' [' + df_merged['Kode Kabupaten/Kota'].astype(str) + ']'+ ' '+ df_merged['Nama Kabupaten/Kota'].astype(str)
+df_merged['Desa'] = ' [' + df_merged['Kode Desa'].astype(str) + ']' + ' '+ df_merged['Nama Desa'].astype(str) 
+df_merged['SLS'] = '[' + df_merged['Kode SLS'].astype(str) + ']' + ' ' + df_merged['Nama SLS'].astype(str)
 
 
 st.subheader("Filter Data")
 col11, col22, col33, col44 = st.columns(4)
 
 with col11:
-    kode_sls = st.multiselect("Kode Wilayah SLS:", df_merged['Kode Wilayah SLS'].unique())
-df2_f = df_merged if not kode_sls else df_merged[df_merged['Kode Wilayah SLS'].isin(kode_sls)]
-with col22:
-    kecamatan = st.multiselect("Nama Kecamatan:", df2_f['Nama Kecamatan'].unique())
-df3_f = df2_f if not kecamatan else df2_f[df2_f['Nama Kecamatan'].isin(kecamatan)]
-with col33:    
-    desa = st.multiselect("Nama Desa:", df3_f['Nama Desa'].unique())
-df4_f = df3_f if not desa else df3_f[df3_f['Nama Desa'].isin(desa)]
-with col44:  
-    ketuasls = st.multiselect("Nama Ketua SLS:", df4_f['Nama Ketua SLS'].unique())
-df_filtered_ref = df4_f if not ketuasls else df4_f[df4_f['Nama Ketua SLS'].isin(ketuasls)]
+    sls_options = sorted(df_merged['Kode Wilayah SLS'].unique())
+    selected_sls = st.multiselect("Kode Wilayah SLS:", sls_options)
+    if selected_sls:
+        filtered_df = filtered_df[filtered_df['Kode Wilayah SLS'].isin(selected_sls)]
 
-st.dataframe(df_filtered_ref)
+with col22:
+    kecamatan_options = sorted(filtered_df['Kecamatan'].unique())
+    selected_kecamatan = st.multiselect("Kecamatan:", kecamatan_options)
+    if selected_kecamatan:
+        filtered_df = filtered_df[filtered_df['Kecamatan'].isin(selected_kecamatan)]
+
+with col33:
+    desa_options = sorted(filtered_df['Desa'].unique())
+    selected_desa = st.multiselect("Desa:", desa_options)
+    if selected_desa:
+        filtered_df = filtered_df[filtered_df['Desa'].isin(selected_desa)]
+with col44:
+    sls_option = sorted(filtered_df['SLS'].unique())
+    selected_sls = st.multiselect("SLS:", sls_option)
+    if selected_sls:
+        filtered_df = filtered_df[filtered_df['SLS'].isin(selected_sls)]
+
+tampilan_kolom = [
+    'Kode Wilayah SLS',
+    'Kode Wilayah Desa',
+    'Nama Provinsi',
+    'Kabupaten/Kota',
+    'Kecamatan',
+    'Desa',
+    'SLS',
+    'Nama Ketua SLS',
+    'Total Landmark'
+]
+filtered_df = filtered_df[tampilan_kolom]
+
+st.dataframe(filtered_df)
 
 
 df_merged['status'] = df_merged['Total Landmark'] >= 4
