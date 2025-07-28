@@ -9,8 +9,9 @@ from streamlit_folium import folium_static
 import mysql.connector
 from sqlalchemy import create_engine, types as sql_types
 from folium.plugins import MarkerCluster
-st.set_page_config(page_title="Kota Banjar", page_icon="🌳", layout="wide")
+
 # --- PAGE CONFIGURATION ---
+st.set_page_config(page_title="Kota Banjar", page_icon="🌳", layout="wide")
 st.markdown("""
     <h1 style='text-align: center; font-size: 60px;'>🔍 Monitoring Wilkerstat Sensus Ekonomi 2026</h1>
     <h2 style='text-align: center; font-size: 50px;'>Kota Banjar</h2>
