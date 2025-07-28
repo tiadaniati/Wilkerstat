@@ -137,11 +137,11 @@ with col1:
         st.error(f"⚠️ Gagal membaca file GeoJSON: {e}.")
         gdf = gpd.GeoDataFrame() 
 
-        m = folium.Map(
-            location=[-7.374585, 108.558189],
-            zoom_start=13,
-            tiles='OpenStreetMap'
-        )
+    m = folium.Map(
+        location=[-7.374585, 108.558189],
+        zoom_start=13,
+        tiles='OpenStreetMap'
+    )
 
     if not gdf.empty:
         folium.GeoJson(
