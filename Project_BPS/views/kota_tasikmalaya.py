@@ -132,7 +132,7 @@ with col1:
     def fetch_uploaded_data():
         """Fetches uploaded location data from the database."""
         try:
-            df_query = conn_st.query("SELECT * FROM uploaded_kota_banjar;", ttl=600)
+            df_query = conn_st.query("SELECT * FROM uploaded_kota_tasikmalaya;", ttl=600)
             return df_query
         except Exception as e:
             st.warning(f"Tidak dapat mengambil data dari DB untuk peta: {e}")
@@ -251,7 +251,7 @@ for kolom in ['kdkec', 'kddesa', 'kdsls']:
     df_ref[kolom] = df_ref[kolom].str.zfill(3)
 
 try:
-    df_ref.to_sql("kota_banjar", con=conn_st.engine, if_exists="replace", index=False, dtype={
+    df_ref.to_sql("kota_tasikmalaya", con=conn_st.engine, if_exists="replace", index=False, dtype={
         'idsubsls': sql_types.VARCHAR(20), 'iddesa': sql_types.VARCHAR(20), 'kdprov': sql_types.VARCHAR(10),
         'nmprov': sql_types.VARCHAR(100), 'kdkab': sql_types.VARCHAR(10), 'nmkab': sql_types.VARCHAR(100),
         'kdkec': sql_types.VARCHAR(10), 'nmkec': sql_types.VARCHAR(100), 'kddesa': sql_types.VARCHAR(10),
