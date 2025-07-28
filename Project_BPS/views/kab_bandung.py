@@ -11,7 +11,7 @@ from sqlalchemy import create_engine, types as sql_types
 from folium.plugins import MarkerCluster
 
 # --- PAGE CONFIGURATION ---
-st.set_page_config(page_title="Kota Bandung", page_icon="🌳", layout="wide")
+st.set_page_config(page_title="Kabupaten Bandung", page_icon="🌳", layout="wide")
 st.markdown("""
     <h1 style='text-align: center; font-size: 60px;'>🔍 Monitoring Wilkerstat Sensus Ekonomi 2026</h1>
     <h2 style='text-align: center; font-size: 50px;'>Kabupaten Bandung</h2>
@@ -112,7 +112,7 @@ with col2:
     elif fl is None and st.session_state['uploaded_df'] is None:
         st.info("📔 Menampilkan data template default karena belum ada file diunggah.")
         try:
-            df = pd.read_excel(r"Project_BPS/dataset/data_input.xlsx")
+            df = pd.read_csv(r"Project_BPS/dataset/template_data2.csv")
             st.dataframe(df, height=300)
             st.session_state['uploaded_df'] = df
         except FileNotFoundError:
@@ -148,7 +148,7 @@ with col1:
         gdf = gpd.GeoDataFrame() 
 
     m = folium.Map(
-        location=[-7.083649033745665, 107.62193910200422],
+        location=[-7.374585, 108.558189],
         zoom_start=13,
         tiles='OpenStreetMap'
     )
