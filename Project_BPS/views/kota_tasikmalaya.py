@@ -11,10 +11,10 @@ from sqlalchemy import create_engine, types as sql_types
 from folium.plugins import MarkerCluster
 
 # --- PAGE CONFIGURATION ---
-st.set_page_config(page_title="Kota Tasikmalaya", page_icon="🌇", layout="wide")
+st.set_page_config(page_title="Kabupaten Ciamis", page_icon="🌇", layout="wide")
 st.markdown("""
     <h1 style='text-align: center; font-size: 60px;'>🔍 Monitoring Wilkerstat Sensus Ekonomi 2026</h1>
-    <h2 style='text-align: center; font-size: 50px;'>Kota Tasikmalaya</h2>
+    <h2 style='text-align: center; font-size: 50px;'>Kabupaten Ciamis</h2>
 """, unsafe_allow_html=True)
 
 st.markdown("""
@@ -88,7 +88,7 @@ with col2:
                 st.success("✅ File berhasil diproses.")
 
                 try:
-                    df.to_sql("uploaded_kota_tasikmalaya", con=conn_st.engine, if_exists=if_exists_option, index=False, dtype={
+                    df.to_sql("uploaded_kab_ciamis", con=conn_st.engine, if_exists=if_exists_option, index=False, dtype={
                         'ID': sql_types.VARCHAR(255),
                         'Nama Petugas': sql_types.VARCHAR(255),
                         'Kode Wilayah Desa': sql_types.VARCHAR(255),
@@ -128,11 +128,10 @@ if 'uploaded_df' in st.session_state and st.session_state['uploaded_df'] is not 
 with col1:
     st.header("Peta Lokasi")
     
-    @st.cache_data(ttl=3600)
     def fetch_uploaded_data():
         """Fetches uploaded location data from the database."""
         try:
-            df_query = conn_st.query("SELECT * FROM uploaded_kota_tasikmalaya;", ttl=600)
+            df_query = conn_st.query("SELECT * FROM uploaded_kab_ciamis;", ttl=600)
             return df_query
         except Exception as e:
             st.warning(f"Tidak dapat mengambil data dari DB untuk peta: {e}")
@@ -148,7 +147,7 @@ with col1:
         gdf = gpd.GeoDataFrame() 
 
     m = folium.Map(
-        location=[-7.452059791908823, 108.12532960444605],
+        location=[-7.2568016201885355, 108.40894841925659],
         zoom_start=13,
         tiles='OpenStreetMap'
     )
@@ -227,7 +226,7 @@ def metric_card(title, value):
 stat1, stat2, stat3 = st.columns((2, 3, 3))
 
 try:
-    df_tasikmalaya_csv = pd.read_csv("Project_BPS/dataset/kota_tasikmalaya.csv")
+    df_ciamis_csv = pd.read_csv("Project_BPS/dataset/kab_ciamis.csv")
 except FileNotFoundError:
     st.error("File referensi tidak ditemukan. Statistik tidak dapat ditampilkan.")
     st.stop()
@@ -238,9 +237,9 @@ else:
     landmark = pd.DataFrame(columns=['Kode Wilayah Desa', 'Nama SLS', 'total_landmark'])
 
 
-st.title("Database Kota Tasikmalaya")
+st.title("Database Kabupaten Ciamis")
 
-df_ref = df_tasikmalaya_csv.copy()
+df_ref = df_ciamis_csv.copy()
 
 kolom_kode = ['idsubsls', 'iddesa', 'kdprov', 'kdkab', 'kdkec', 'kddesa', 'kdsls']
 for kolom in kolom_kode:
@@ -251,7 +250,7 @@ for kolom in ['kdkec', 'kddesa', 'kdsls']:
     df_ref[kolom] = df_ref[kolom].str.zfill(3)
 
 try:
-    df_ref.to_sql("kota_tasikmalaya", con=conn_st.engine, if_exists="replace", index=False, dtype={
+    df_ref.to_sql("kab_ciamis", con=conn_st.engine, if_exists="replace", index=False, dtype={
         'idsubsls': sql_types.VARCHAR(20), 'iddesa': sql_types.VARCHAR(20), 'kdprov': sql_types.VARCHAR(10),
         'nmprov': sql_types.VARCHAR(100), 'kdkab': sql_types.VARCHAR(10), 'nmkab': sql_types.VARCHAR(100),
         'kdkec': sql_types.VARCHAR(10), 'nmkec': sql_types.VARCHAR(100), 'kddesa': sql_types.VARCHAR(10),
@@ -260,10 +259,10 @@ try:
     })
 
 except Exception as e:
-    st.warning(f"Gagal me-refresh data 'kota_tasikmalaya' di DB: {e}")
+    st.warning(f"Gagal me-refresh data 'kab_ciamis' di DB: {e}")
 
 try:
-    df = conn_st.query("SELECT * FROM kota_tasikmalaya;", ttl=600)
+    df = conn_st.query("SELECT * FROM kab_ciamis;", ttl=600)
     
     rename_mapping = {
         'idsubsls': 'Kode Wilayah SLS', 'iddesa' : 'Kode Wilayah Desa', 'kdprov': 'Kode Provinsi', 
@@ -273,7 +272,7 @@ try:
     }
     df = df.rename(columns=rename_mapping)
 except Exception as e:
-    st.error(f"Gagal mengambil data 'kota_tasikmalaya' dari DB: {e}")
+    st.error(f"Gagal mengambil data 'kab_ciamis' dari DB: {e}")
 
 df['Kode Wilayah Desa'] = df['Kode Wilayah Desa'].astype(str)
 landmark['Kode Wilayah Desa'] = landmark['Kode Wilayah Desa'].astype(str)
@@ -337,15 +336,15 @@ st.dataframe(filtered_df)
 df_merged['status'] = df_merged['Total Landmark'] >= 4
 
 with stat1:
-    st.markdown(metric_card("Jumlah Kecamatan", df_tasikmalaya_csv['nmkec'].nunique()), unsafe_allow_html=True)
-    st.markdown(metric_card("Jumlah Desa", df_tasikmalaya_csv['nmdesa'].nunique()), unsafe_allow_html=True)
-    st.markdown(metric_card("Jumlah SLS", df_tasikmalaya_csv['idsubsls'].nunique()), unsafe_allow_html=True)
+    st.markdown(metric_card("Jumlah Kecamatan", df_ciamis_csv['nmkec'].nunique()), unsafe_allow_html=True)
+    st.markdown(metric_card("Jumlah Desa", df_ciamis_csv['nmdesa'].nunique()), unsafe_allow_html=True)
+    st.markdown(metric_card("Jumlah SLS", df_ciamis_csv['idsubsls'].nunique()), unsafe_allow_html=True)
     st.markdown(metric_card("Total SLS Sukses", df_merged['status'].sum()), unsafe_allow_html=True)
     st.markdown(metric_card("Total Landmark", round(df_merged['Total Landmark'].sum())), unsafe_allow_html=True)
 
 with stat2:
     total_sls_acc = df_merged['status'].sum()
-    jumlah_sls = df_tasikmalaya_csv['idsubsls'].nunique()
+    jumlah_sls = df_ciamis_csv['idsubsls'].nunique()
     sls_belum_acc = jumlah_sls - total_sls_acc
     data_pie = {'Category': ['Total SLS Sukses', 'Total SLS Belum Sukses'], 'Count': [total_sls_acc, sls_belum_acc]}
     df_pie = pd.DataFrame(data_pie)
