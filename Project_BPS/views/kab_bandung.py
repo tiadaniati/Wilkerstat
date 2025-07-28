@@ -189,7 +189,7 @@ with col1:
                 pass
 
     folium.LayerControl().add_to(m)    
-    folium_static(m, width=500, height=650)
+    folium_static(m, width=None, height=650)
 
 #=========================================================================
 # FILTER DATA UNGGAHAN 
