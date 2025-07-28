@@ -20,7 +20,7 @@ st.markdown("""
 st.markdown("""
 <style>
 .main .block-container {
-    max-width: 60%;
+    max-width: 100%;
     padding-left: 2rem;
     padding-right: 2rem;
 }
