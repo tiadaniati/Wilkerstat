@@ -26,4 +26,4 @@ mysql-connector-python
 # Environment Variables
 python-dotenv
 
-openpyxl==3.1.2
+openpyxl
