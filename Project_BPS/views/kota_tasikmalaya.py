@@ -112,7 +112,7 @@ with col2:
     elif fl is None and st.session_state['uploaded_df'] is None:
         st.info("📔 Menampilkan data template default karena belum ada file diunggah.")
         try:
-            df = pd.read_csv(r"Project_BPS/dataset/template_data2.csv")
+            df = pd.read_excel(r"Project_BPS/dataset/data_input.xlsx")
             st.dataframe(df, height=300)
             st.session_state['uploaded_df'] = df
         except FileNotFoundError:
