@@ -11,7 +11,7 @@ from sqlalchemy import create_engine, types as sql_types
 from folium.plugins import MarkerCluster
 
 # --- PAGE CONFIGURATION ---
-st.set_page_config(page_title="Kota Ciamis", page_icon="🌇", layout="wide")
+st.set_page_config(page_title="Kota Tasikmalaya", page_icon="🌇", layout="wide")
 st.markdown("""
     <h1 style='text-align: center; font-size: 60px;'>🔍 Monitoring Wilkerstat Sensus Ekonomi 2026</h1>
     <h2 style='text-align: center; font-size: 50px;'>Kota Tasikmalaya</h2>
