@@ -147,7 +147,7 @@ with col1:
         gdf = gpd.GeoDataFrame() 
 
     m = folium.Map(
-        location=[-7.083649033745665, 107.62193910200422],
+        location=[-7.2568016201885355, 108.40894841925659],
         zoom_start=13,
         tiles='OpenStreetMap'
     )
