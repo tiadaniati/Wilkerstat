@@ -139,7 +139,7 @@ with col1:
 
     df_uploaded = fetch_uploaded_data()
 
-    geojson_file = 'Project_BPS/Geolocation/kabupaten.geojson'
+    geojson_file = 'Project_BPS/Geolocation/map_bps.geojson'
     try:
         gdf = gpd.read_file(geojson_file)
     except Exception as e:
@@ -158,7 +158,7 @@ with col1:
             style_function=lambda feature: {
                 'fillColor': 'blue', 'color': 'black', 'weight': 0.9, 'fillOpacity': 0
             },
-            tooltip=folium.features.GeoJsonTooltip(fields=['KABKOT'])
+            tooltip=folium.features.GeoJsonTooltip(fields=['nmkab', 'nmkec'])
         ).add_to(m)
 
     if not df_uploaded.empty:
