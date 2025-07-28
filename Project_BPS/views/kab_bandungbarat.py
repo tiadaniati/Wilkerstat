@@ -226,7 +226,7 @@ def metric_card(title, value):
 stat1, stat2, stat3 = st.columns((2, 3, 3))
 
 try:
-    df_bandungbrt_csv = pd.read_csv("Project_BPS/dataset/kab_bandungbarat.csv")
+    df_bandungbrt_csv = pd.read_csv("Project_BPS/dataset/kab_bandung barat.csv")
 except FileNotFoundError:
     st.error("File referensi tidak ditemukan. Statistik tidak dapat ditampilkan.")
     st.stop()
