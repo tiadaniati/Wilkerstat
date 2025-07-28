@@ -88,7 +88,7 @@ with col2:
                 st.success("✅ File berhasil diproses.")
 
                 try:
-                    df.to_sql("uploaded_kab_tasikmalaya", con=conn_st.engine, if_exists=if_exists_option, index=False, dtype={
+                    df.to_sql("uploaded_kota_tasikmalaya", con=conn_st.engine, if_exists=if_exists_option, index=False, dtype={
                         'ID': sql_types.VARCHAR(255),
                         'Nama Petugas': sql_types.VARCHAR(255),
                         'Kode Wilayah Desa': sql_types.VARCHAR(255),
