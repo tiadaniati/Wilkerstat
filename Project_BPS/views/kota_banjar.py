@@ -283,6 +283,7 @@ df_merged['SLS'] = '[' + df_merged['Kode SLS'].astype(str) + ']' + ' ' + df_merg
 
 st.subheader("Filter Data")
 col11, col22, col33, col44 = st.columns(4)
+filtered_df = df_merged
 
 with col11:
     sls_options = sorted(df_merged['Kode Wilayah SLS'].unique())
