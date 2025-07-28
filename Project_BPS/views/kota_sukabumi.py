@@ -237,7 +237,7 @@ else:
     landmark = pd.DataFrame(columns=['Kode Wilayah Desa', 'Nama SLS', 'total_landmark'])
 
 
-st.title("Database Kabupaten Sukabumi")
+st.title("Database Kota Sukabumi")
 
 df_ref = df_csv.copy()
 
