@@ -138,7 +138,7 @@ with tab_chatbot:
     with col1:
 
         st.markdown("<br>", unsafe_allow_html=True) 
-        st.image("asset/chatbot.png")
+        st.image("Project_BPS/asset/chatbot.png")
 
     with col2:
         st.subheader("Langkah-langkah Interaksi")
