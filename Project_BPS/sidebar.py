@@ -69,7 +69,7 @@ filter_lokasi = {k:v for k,v in semua_lokasi.items() if query.lower() in k.lower
 lokasi_ditampilkan = list(filter_lokasi.values()) if query else list(semua_lokasi.values())
 pg = st.navigation(
     {
-        "Main Menu": [home_page,chatbot_page],
+        "Main Menu": [home_page,chatbot_page, info_page],
         "Lokasi Wilayah": lokasi_ditampilkan
     }
 )
