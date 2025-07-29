@@ -147,7 +147,7 @@ with col1:
         gdf = gpd.GeoDataFrame() 
 
     m = folium.Map(
-        location=[-7.336394663564128, 107.7671033388639],
+        location=[-6.60127146542485, 106.81133614182369],
         zoom_start=13,
         tiles='OpenStreetMap'
     )
@@ -226,7 +226,7 @@ def metric_card(title, value):
 stat1, stat2, stat3 = st.columns((2, 3, 3))
 
 try:
-    df_garut_csv = pd.read_csv("Project_BPS/dataset/kab_garut.csv")
+    df_csv = pd.read_csv("Project_BPS/dataset/kab_garut.csv")
 except FileNotFoundError:
     st.error("File referensi tidak ditemukan. Statistik tidak dapat ditampilkan.")
     st.stop()
@@ -239,7 +239,7 @@ else:
 
 st.title("Database Kabupaten Garut")
 
-df_ref = df_garut_csv.copy()
+df_ref = df_csv.copy()
 
 kolom_kode = ['idsubsls', 'iddesa', 'kdprov', 'kdkab', 'kdkec', 'kddesa', 'kdsls']
 for kolom in kolom_kode:
@@ -250,7 +250,7 @@ for kolom in ['kdkec', 'kddesa', 'kdsls']:
     df_ref[kolom] = df_ref[kolom].str.zfill(3)
 
 try:
-    df_ref.to_sql("kab_bandung", con=conn_st.engine, if_exists="replace", index=False, dtype={
+    df_ref.to_sql("kab_garut", con=conn_st.engine, if_exists="replace", index=False, dtype={
         'idsubsls': sql_types.VARCHAR(20), 'iddesa': sql_types.VARCHAR(20), 'kdprov': sql_types.VARCHAR(10),
         'nmprov': sql_types.VARCHAR(100), 'kdkab': sql_types.VARCHAR(10), 'nmkab': sql_types.VARCHAR(100),
         'kdkec': sql_types.VARCHAR(10), 'nmkec': sql_types.VARCHAR(100), 'kddesa': sql_types.VARCHAR(10),
@@ -336,15 +336,15 @@ st.dataframe(filtered_df)
 df_merged['status'] = df_merged['Total Landmark'] >= 4
 
 with stat1:
-    st.markdown(metric_card("Jumlah Kecamatan", df_garut_csv['nmkec'].nunique()), unsafe_allow_html=True)
-    st.markdown(metric_card("Jumlah Desa", df_garut_csv['nmdesa'].nunique()), unsafe_allow_html=True)
-    st.markdown(metric_card("Jumlah SLS", df_garut_csv['idsubsls'].nunique()), unsafe_allow_html=True)
+    st.markdown(metric_card("Jumlah Kecamatan", df_csv['nmkec'].nunique()), unsafe_allow_html=True)
+    st.markdown(metric_card("Jumlah Desa", df_csv['nmdesa'].nunique()), unsafe_allow_html=True)
+    st.markdown(metric_card("Jumlah SLS", df_csv['idsubsls'].nunique()), unsafe_allow_html=True)
     st.markdown(metric_card("Total SLS Sukses", df_merged['status'].sum()), unsafe_allow_html=True)
     st.markdown(metric_card("Total Landmark", round(df_merged['Total Landmark'].sum())), unsafe_allow_html=True)
 
 with stat2:
     total_sls_acc = df_merged['status'].sum()
-    jumlah_sls = df_garut_csv['idsubsls'].nunique()
+    jumlah_sls = df_csv['idsubsls'].nunique()
     sls_belum_acc = jumlah_sls - total_sls_acc
     data_pie = {'Category': ['Total SLS Sukses', 'Total SLS Belum Sukses'], 'Count': [total_sls_acc, sls_belum_acc]}
     df_pie = pd.DataFrame(data_pie)
