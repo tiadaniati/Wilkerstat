@@ -250,7 +250,7 @@ for kolom in ['kdkec', 'kddesa', 'kdsls']:
     df_ref[kolom] = df_ref[kolom].str.zfill(3)
 
 try:
-    df_ref.to_sql("kab_cirebon", con=conn_st.engine, if_exists="replace", index=False, dtype={
+    df_ref.to_sql("kab_indramayu", con=conn_st.engine, if_exists="replace", index=False, dtype={
         'idsubsls': sql_types.VARCHAR(20), 'iddesa': sql_types.VARCHAR(20), 'kdprov': sql_types.VARCHAR(10),
         'nmprov': sql_types.VARCHAR(100), 'kdkab': sql_types.VARCHAR(10), 'nmkab': sql_types.VARCHAR(100),
         'kdkec': sql_types.VARCHAR(10), 'nmkec': sql_types.VARCHAR(100), 'kddesa': sql_types.VARCHAR(10),
