@@ -37,6 +37,7 @@ kota_tasikmalaya = st.Page("views/kota_tasikmalaya.py",title="Kota Tasikmalaya",
 
 
 chatbot_page = st.Page("chatbot.py",icon="👨‍🏫",title="Chatbot")
+info_page = st.Page("info.py",icon="📖",title='Info')
 semua_lokasi = {
     "Kabupaten Bogor": kab_bogor,
     "Kabupaten Sukabumi": kab_sukabumi,
