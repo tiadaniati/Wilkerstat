@@ -51,8 +51,49 @@ col1, col2 = st.columns((2, 1))
 #Upload Data
 #=========================================================================
 with col2:
-    st.header("Unggah Data")
-    fl = st.file_uploader("Unggah Rekap Aktivitas", type=["csv", "txt", "xlsx", "xls"])
+    if 'authenticated' not in st.session_state:
+        st.session_state.authenticated = False
+    if 'uploaded_df' not in st.session_state:
+        st.session_state.uploaded_df = None
+    if 'uploaded_filename' not in st.session_state:
+        st.session_state.uploaded_filename = None
+
+    CREDENTIALS = {
+        "adminppkk": "berkibar"
+    }
+
+    if not st.session_state.authenticated:
+        st.title("Unggah Data")
+        st.write("Silahkan login dahulu untuk upload file.")
+        
+        username = st.text_input("Username")
+        password = st.text_input("Password", type="password")
+
+        if st.button("Login", type="primary"):
+            if username in CREDENTIALS and CREDENTIALS[username] == password:
+                st.session_state.authenticated = True
+                st.session_state.username = username
+                st.rerun()
+            else:
+                st.error("😕 Username atau password salah.")
+
+    else:
+        with st.sidebar:
+            st.success(f"Selamat datang, **{st.session_state.username}**!")
+            if st.button("Logout"):
+                st.session_state.authenticated = False
+                st.session_state.username = None
+                st.session_state.uploaded_df = None
+                st.session_state.uploaded_filename = None
+                st.rerun()
+
+        st.header("Unggah Data")
+        st.write("Anda berhasil login. Sekarang Anda bisa mengunggah file.")
+        
+        fl = st.file_uploader(
+            "Unggah Rekap Aktivitas", 
+            type=["csv", "txt", "xlsx", "xls"]
+        )
     upload_option = st.radio(
         "Pilih metode unggah ke database:",
         ["Ganti data sebelumnya (Ganti)", "Tambahkan ke data sebelumnya (Tambah)"]
