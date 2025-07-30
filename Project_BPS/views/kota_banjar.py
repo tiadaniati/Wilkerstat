@@ -88,7 +88,7 @@ with col2:
                 st.success("✅ File berhasil diproses.")
 
                 try:
-                    df.to_sql("uploaded_kota_banjar", con=conn_st.engine, if_exists=if_exists_option, index=False, dtype={
+                    df.to_sql("_banjar", con=conn_st.engine, if_exists=if_exists_option, index=False, dtype={
                         'ID': sql_types.VARCHAR(255),
                         'Nama Petugas': sql_types.VARCHAR(255),
                         'Kode Wilayah Desa': sql_types.VARCHAR(255),
@@ -128,7 +128,7 @@ if 'uploaded_df' in st.session_state and st.session_state['uploaded_df'] is not 
 with col1:
     st.header("Peta Lokasi")
     
-    @st.cache_data(ttl=3600)
+
     def fetch_uploaded_data():
         """Fetches uploaded location data from the database."""
         try:
