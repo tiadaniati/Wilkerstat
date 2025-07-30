@@ -279,7 +279,10 @@ except Exception as e:
     st.error(f"Gagal mengambil data 'kota_banjar' dari DB: {e}")
 
 df['Kode Wilayah Desa'] = df['Kode Wilayah Desa'].astype(str)
-landmark['Kode Wilayah Desa'] = landmark['Kode Wilayah Desa'].astype(str)
+landmark['Kode Wilayah Desa'] = landmark['Kode Wilayah Desa'].astype(str)'
+
+st.dataframe(df)
+st.dataframe(landmark)
 
 df_merged = pd.merge(df, landmark, on=['Kode Wilayah Desa', 'Nama SLS'], how='left')
 df_merged['total_landmark'] = df_merged['total_landmark'].fillna(0)
