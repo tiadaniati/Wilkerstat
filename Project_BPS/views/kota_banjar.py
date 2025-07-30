@@ -261,7 +261,6 @@ try:
         'nmdesa': sql_types.VARCHAR(100), 'kdsls': sql_types.VARCHAR(10), 'nmsls': sql_types.VARCHAR(100),
         'nama_ketua': sql_types.VARCHAR(100), 'total_landmark': sql_types.INT()
     })
-
 except Exception as e:
     st.warning(f"Gagal me-refresh data 'kota_banjar' di DB: {e}")
 
@@ -279,10 +278,7 @@ except Exception as e:
     st.error(f"Gagal mengambil data 'kota_banjar' dari DB: {e}")
 
 df['Kode Wilayah Desa'] = df['Kode Wilayah Desa'].astype(str)
-landmark['Kode Wilayah Desa'] = landmark['Kode Wilayah Desa'].astype(str)'
-
-st.dataframe(df)
-st.dataframe(landmark)
+landmark['Kode Wilayah Desa'] = landmark['Kode Wilayah Desa'].astype(str)
 
 df_merged = pd.merge(df, landmark, on=['Kode Wilayah Desa', 'Nama SLS'], how='left')
 df_merged['total_landmark'] = df_merged['total_landmark'].fillna(0)
@@ -293,9 +289,9 @@ df_merged['Kabupaten/Kota'] = ' [' + df_merged['Kode Kabupaten/Kota'].astype(str
 df_merged['Desa'] = ' [' + df_merged['Kode Desa'].astype(str) + ']' + ' '+ df_merged['Nama Desa'].astype(str) 
 df_merged['SLS'] = '[' + df_merged['Kode SLS'].astype(str) + ']' + ' ' + df_merged['Nama SLS'].astype(str)
 
-
 st.subheader("Filter Data")
 col11, col22, col33, col44 = st.columns(4)
+
 filtered_df = df_merged
 
 with col11:
