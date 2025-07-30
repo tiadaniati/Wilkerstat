@@ -139,7 +139,7 @@ with col1:
 
     df_uploaded = fetch_uploaded_data()
 
-    geojson_file = 'Project_BPS/Geolocation/map_bps.geojson'
+    geojson_file = 'Project_BPS/Geolocation/map_kota_bogor.geojson'
     try:
         gdf = gpd.read_file(geojson_file)
     except Exception as e:
@@ -246,8 +246,10 @@ for kolom in kolom_kode:
     if kolom in df_ref.columns:
         df_ref[kolom] = df_ref[kolom].astype(str)
         
-for kolom in ['kdkec', 'kddesa', 'kdsls']:
+for kolom in ['kdkec', 'kddesa']:
     df_ref[kolom] = df_ref[kolom].str.zfill(3)
+for kolom in ['kdsls']:
+    df_ref[kolom] = df_ref[kolom].str.zfill(4)
 
 try:
     df_ref.to_sql("kota_bogor", con=conn_st.engine, if_exists="replace", index=False, dtype={
@@ -325,7 +327,6 @@ tampilan_kolom = [
     'Kecamatan',
     'Desa',
     'SLS',
-    'Nama Ketua SLS',
     'Total Landmark'
 ]
 filtered_df = filtered_df[tampilan_kolom]
