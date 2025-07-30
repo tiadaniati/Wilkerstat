@@ -247,8 +247,11 @@ for kolom in kolom_kode:
     if kolom in df_ref.columns:
         df_ref[kolom] = df_ref[kolom].astype(str)
         
-for kolom in ['kdkec', 'kddesa', 'kdsls']:
+for kolom in ['kdkec', 'kddesa']:
     df_ref[kolom] = df_ref[kolom].str.zfill(3)
+
+for kolom in ['kdsls']:
+    df_ref[kolom] = df_ref[kolom].str.zfill(4)
 
 try:
     df_ref.to_sql("kota_banjar", con=conn_st.engine, if_exists="replace", index=False, dtype={
