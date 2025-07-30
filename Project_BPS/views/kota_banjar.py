@@ -140,7 +140,7 @@ with col1:
 
     df_uploaded = fetch_uploaded_data()
 
-    geojson_file = 'Project_BPS/Geolocation/map_bps.geojson'
+    geojson_file = 'Project_BPS/Geolocation/map_kota_banjar.geojson'
     try:
         gdf = gpd.read_file(geojson_file)
     except Exception as e:
@@ -329,7 +329,6 @@ tampilan_kolom = [
     'Kecamatan',
     'Desa',
     'SLS',
-    'Nama Ketua SLS',
     'Total Landmark'
 ]
 filtered_df = filtered_df[tampilan_kolom]
