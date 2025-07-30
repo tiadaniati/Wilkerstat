@@ -281,9 +281,6 @@ except Exception as e:
 df['Kode Wilayah Desa'] = df['Kode Wilayah Desa'].astype(str)
 landmark['Kode Wilayah Desa'] = landmark['Kode Wilayah Desa'].astype(str)
 
-df['Kode Wilayah Desa'] = df['Kode Wilayah Desa'].astype(str)
-landmark['Kode Wilayah Desa'] = landmark['Kode Wilayah Desa'].astype(str)
-
 df_merged = pd.merge(df, landmark, on=['Kode Wilayah Desa', 'Nama SLS'], how='left')
 df_merged['total_landmark'] = df_merged['total_landmark'].fillna(0)
 df_merged = df_merged.rename(columns={'total_landmark':'Total Landmark'})
