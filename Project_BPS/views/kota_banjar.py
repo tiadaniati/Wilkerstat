@@ -59,7 +59,7 @@ with col2:
         st.session_state.uploaded_filename = None
 
     CREDENTIALS = {
-        "adminppkk": "berkibar"
+        "nikki": "123"
     }
 
     if not st.session_state.authenticated:
@@ -94,74 +94,70 @@ with col2:
             "Unggah Rekap Aktivitas", 
             type=["csv", "txt", "xlsx", "xls"]
         )
-    upload_option = st.radio(
-        "Pilih metode unggah ke database:",
-        ["Ganti data sebelumnya (Ganti)", "Tambahkan ke data sebelumnya (Tambah)"]
-    )
 
-    if_exists_option = "replace" if "Ganti" in upload_option else "append"
-    if fl is not None:
-        filename = fl.name
+        upload_option = st.radio(
+            "Pilih metode unggah ke database:",
+            ["Ganti data sebelumnya (Ganti)", "Tambahkan ke data sebelumnya (Tambah)"]
+        )
+        if_exists_option = "replace" if "Ganti" in upload_option else "append"
 
-        if st.session_state.get('uploaded_filename') != filename:
-            st.write(f"📗 Memproses file: `{filename}`")
-            try:
-                if filename.endswith((".csv", ".txt")):
-                    df = pd.read_csv(fl)
-                else:
-                    df = pd.read_excel(fl)
 
-                column_map = {
-                    'id': 'ID', 'nama_krt': 'Nama Petugas', 'iddesa':'Kode Wilayah Desa',
-                    'deskripsi_project':'Nama SLS', 'latitude': 'Latitude', 'longitude':'Longitude',
-                    'user_upload_at':'Waktu Submit'
-                }
-                df = df.rename(columns=column_map)
-                
-                required_cols = ['ID','Nama Petugas','Kode Wilayah Desa','Nama SLS','Latitude','Longitude','Waktu Submit']
-                for col in required_cols:
-                    if col not in df.columns:
-                        df[col] = None
-                df = df[required_cols]
+        if fl is not None:
+            filename = fl.name
 
-                st.session_state['uploaded_df'] = df
-                st.session_state['uploaded_filename'] = filename
-                st.success("✅ File berhasil diproses.")
-
+            if st.session_state.get('uploaded_filename') != filename:
+                st.write(f"📗 Memproses file: `{filename}`")
                 try:
-                    df.to_sql("_banjar", con=conn_st.engine, if_exists=if_exists_option, index=False, dtype={
-                        'ID': sql_types.VARCHAR(255),
-                        'Nama Petugas': sql_types.VARCHAR(255),
-                        'Kode Wilayah Desa': sql_types.VARCHAR(255),
-                        'Nama SLS': sql_types.VARCHAR(255),
-                        'Latitude': sql_types.FLOAT,
-                        'Longitude': sql_types.FLOAT,
-                        'Waktu Submit': sql_types.DATETIME
-                    })
-                    st.success(f"✅ Data berhasil diunggah ke database dengan metode: `{if_exists_option}`.")
+                    if filename.endswith((".csv", ".txt")):
+                        df = pd.read_csv(fl)
+                    else:
+                        df = pd.read_excel(fl)
+
+                    column_map = {
+                        'id': 'ID', 'nama_krt': 'Nama Petugas', 'iddesa':'Kode Wilayah Desa',
+                        'deskripsi_project':'Nama SLS', 'latitude': 'Latitude', 'longitude':'Longitude',
+                        'user_upload_at':'Waktu Submit'
+                    }
+                    df = df.rename(columns=column_map)
+                    
+                    required_cols = ['ID','Nama Petugas','Kode Wilayah Desa','Nama SLS','Latitude','Longitude','Waktu Submit']
+                    for col in required_cols:
+                        if col not in df.columns:
+                            df[col] = None
+                    df = df[required_cols]
+
+                    st.session_state['uploaded_df'] = df
+                    st.session_state['uploaded_filename'] = filename
+                    st.success("✅ File berhasil diproses.")
+
+                    try:
+                        df.to_sql("uploaded_kota_banjar", con=conn_st.engine, if_exists=if_exists_option, index=False, dtype={
+                            'ID': sql_types.VARCHAR(255),
+                            'Nama Petugas': sql_types.VARCHAR(255),
+                            'Kode Wilayah Desa': sql_types.VARCHAR(255),
+                            'Nama SLS': sql_types.VARCHAR(255),
+                            'Latitude': sql_types.FLOAT,
+                            'Longitude': sql_types.FLOAT,
+                            'Waktu Submit': sql_types.DATETIME
+                        })
+                        st.success(f"✅ Data berhasil diunggah ke database dengan metode: `{if_exists_option}`.")
+                    except Exception as e:
+                        st.warning(f"⚠️ Gagal mengunggah ke MySQL: {e}")
+                
                 except Exception as e:
-                    st.warning(f"⚠️ Gagal mengunggah ke MySQL: {e}")
-            
-            except Exception as e:
-                st.error(f"😥 Gagal memproses file: {e}")
-                st.stop()
+                    st.error(f"😥 Gagal memproses file: {e}")
 
-    if st.session_state['uploaded_df'] is not None:
-        df = st.session_state['uploaded_df']  
-        st.dataframe(df, height=250)
-
-    elif fl is None and st.session_state['uploaded_df'] is None:
-        st.info("📔 Menampilkan data template default karena belum ada file diunggah.")
-        try:
-            df = pd.read_csv(r"Project_BPS/dataset/template_data2.csv")
-            st.dataframe(df, height=300)
-            st.session_state['uploaded_df'] = df
-        except FileNotFoundError:
-            st.warning("Tampilan data template dilewati.")
-            df = pd.DataFrame() 
-
-if 'uploaded_df' in st.session_state and st.session_state['uploaded_df'] is not None:
-    df = st.session_state['uploaded_df']
+        if st.session_state['uploaded_df'] is not None:
+            st.write("Tampilan Data:")
+            st.dataframe(st.session_state['uploaded_df'], height=300)
+        else:
+            st.info("📔 Menampilkan data template default karena belum ada file diunggah.")
+            try:
+                df_template = pd.read_csv(r"/Users/jibrilnikki/Documents/Code/Project_BPS/dataset/template_data2.csv")
+                st.dataframe(df_template, height=300)
+                st.session_state['uploaded_df'] = df_template 
+            except FileNotFoundError:
+                st.warning("File template tidak ditemukan, tampilan data dilewati.")
 
 #=========================================================================
 #Map
