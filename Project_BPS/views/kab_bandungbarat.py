@@ -169,7 +169,7 @@ with col1:
     def fetch_uploaded_data():
         """Fetches uploaded location data from the database."""
         try:
-            df_query = conn_st.query("SELECT * FROM uploaded_kab_bandungbrt;", ttl=600)
+            df_query = conn_st.query("SELECT * FROM uploaded_kab_bandungbarat;", ttl=600)
             return df_query
         except Exception as e:
             st.warning(f"Tidak dapat mengambil data dari DB untuk peta: {e}")
