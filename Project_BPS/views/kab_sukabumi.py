@@ -49,78 +49,116 @@ col1, col2 = st.columns((2, 1))
 
 #=========================================================================
 #Upload Data
-#=========================================================================
-with col2:
-    st.header("Unggah Data")
-    fl = st.file_uploader("Unggah Rekap Aktivitas", type=["csv", "txt", "xlsx", "xls"])
-    upload_option = st.radio(
-        "Pilih metode unggah ke database:",
-        ["Ganti data sebelumnya (Ganti)", "Tambahkan ke data sebelumnya (Tambah)"]
-    )
+#=======================================with col2:
+    if 'authenticated' not in st.session_state:
+        st.session_state.authenticated = False
+    if 'uploaded_df' not in st.session_state:
+        st.session_state.uploaded_df = None
+    if 'uploaded_filename' not in st.session_state:
+        st.session_state.uploaded_filename = None
 
-    if_exists_option = "replace" if "Ganti" in upload_option else "append"
-    if fl is not None:
-        filename = fl.name
+    CREDENTIALS = {
+        "admin3202": "berkibar"
+    }
 
-        if st.session_state.get('uploaded_filename') != filename:
-            st.write(f"📗 Memproses file: `{filename}`")
-            try:
-                if filename.endswith((".csv", ".txt")):
-                    df = pd.read_csv(fl)
-                else:
-                    df = pd.read_excel(fl)
+    if not st.session_state.authenticated:
+        st.title("Unggah Data")
+        st.write("Silahkan login dahulu untuk upload file.")
+        
+        username = st.text_input("Username")
+        password = st.text_input("Password", type="password")
 
-                column_map = {
-                    'id': 'ID', 'nama_krt': 'Nama Petugas', 'iddesa':'Kode Wilayah Desa',
-                    'deskripsi_project':'Nama SLS', 'latitude': 'Latitude', 'longitude':'Longitude',
-                    'user_upload_at':'Waktu Submit'
-                }
-                df = df.rename(columns=column_map)
-                
-                required_cols = ['ID','Nama Petugas','Kode Wilayah Desa','Nama SLS','Latitude','Longitude','Waktu Submit']
-                for col in required_cols:
-                    if col not in df.columns:
-                        df[col] = None
-                df = df[required_cols]
+        if st.button("Login", type="primary"):
+            if username in CREDENTIALS and CREDENTIALS[username] == password:
+                st.session_state.authenticated = True
+                st.session_state.username = username
+                st.rerun()
+            else:
+                st.error("😕 Username atau password salah.")
 
-                st.session_state['uploaded_df'] = df
-                st.session_state['uploaded_filename'] = filename
-                st.success("✅ File berhasil diproses.")
+    else:
+        with st.sidebar:
+            st.success(f"Selamat datang, **{st.session_state.username}**!")
+            if st.button("Logout"):
+                st.session_state.authenticated = False
+                st.session_state.username = None
+                st.session_state.uploaded_df = None
+                st.session_state.uploaded_filename = None
+                st.rerun()
 
+        st.header("Unggah Data")
+        st.write("Anda berhasil login. Sekarang Anda bisa mengunggah file.")
+        
+        fl = st.file_uploader(
+            "Unggah Rekap Aktivitas", 
+            type=["csv", "txt", "xlsx", "xls"]
+        )
+
+        upload_option = st.radio(
+            "Pilih metode unggah ke database:",
+            ["Ganti data sebelumnya (Ganti)", "Tambahkan ke data sebelumnya (Tambah)"]
+        )
+        if_exists_option = "replace" if "Ganti" in upload_option else "append"
+
+
+        if fl is not None:
+            filename = fl.name
+
+            if st.session_state.get('uploaded_filename') != filename:
+                st.write(f"📗 Memproses file: `{filename}`")
                 try:
-                    df.to_sql("uploaded_kab_sukabumi", con=conn_st.engine, if_exists=if_exists_option, index=False, dtype={
-                        'ID': sql_types.VARCHAR(255),
-                        'Nama Petugas': sql_types.VARCHAR(255),
-                        'Kode Wilayah Desa': sql_types.VARCHAR(255),
-                        'Nama SLS': sql_types.VARCHAR(255),
-                        'Latitude': sql_types.FLOAT,
-                        'Longitude': sql_types.FLOAT,
-                        'Waktu Submit': sql_types.DATETIME
-                    })
-                    st.success(f"✅ Data berhasil diunggah ke database dengan metode: `{if_exists_option}`.")
+                    if filename.endswith((".csv", ".txt")):
+                        df = pd.read_csv(fl)
+                    else:
+                        df = pd.read_excel(fl)
+
+                    column_map = {
+                        'id': 'ID', 'iddesa':'Kode Wilayah Desa',
+                        'deskripsi_project':'Nama SLS', 'latitude': 'Latitude', 'longitude':'Longitude',
+                        'user_upload_at':'Waktu Submit', 'wid': 'WID', 'nm_project': 'Nama Project'
+                    }
+                    df = df.rename(columns=column_map)
+                    
+                    required_cols = ['ID','WID','Nama Project','Kode Wilayah Desa','Nama SLS','Latitude','Longitude','Waktu Submit']
+                    for col in required_cols:
+                        if col not in df.columns:
+                            df[col] = None
+                    df = df[required_cols]
+
+                    st.session_state['uploaded_df'] = df
+                    st.session_state['uploaded_filename'] = filename
+                    st.success("✅ File berhasil diproses.")
+
+                    try:
+                        df.to_sql("uploaded_kab_sukabumi", con=conn_st.engine, if_exists=if_exists_option, index=False, dtype={
+                            'ID': sql_types.VARCHAR(255),
+                            'WID': sql_types.VARCHAR(255),
+                            'Nama Project': sql_types.VARCHAR(255),
+                            'Kode Wilayah Desa': sql_types.VARCHAR(255),
+                            'Nama SLS': sql_types.VARCHAR(255),
+                            'Latitude': sql_types.FLOAT,
+                            'Longitude': sql_types.FLOAT,
+                            'Waktu Submit': sql_types.DATETIME
+                        })
+                        st.success(f"✅ Data berhasil diunggah ke database dengan metode: `{if_exists_option}`.")
+                    except Exception as e:
+                        st.warning(f"⚠️ Gagal mengunggah ke MySQL: {e}")
+                
                 except Exception as e:
-                    st.warning(f"⚠️ Gagal mengunggah ke MySQL: {e}")
-            
-            except Exception as e:
-                st.error(f"😥 Gagal memproses file: {e}")
-                st.stop()
+                    st.error(f"😥 Gagal memproses file: {e}")
 
-    if st.session_state['uploaded_df'] is not None:
-        df = st.session_state['uploaded_df']  
-        st.dataframe(df, height=250)
+        if st.session_state['uploaded_df'] is not None:
+            st.write("Tampilan Data:")
+            st.dataframe(st.session_state['uploaded_df'], height=300)
+        else:
+            st.info("📔 Menampilkan data template default karena belum ada file diunggah.")
+            try:
+                df_template = pd.read_csv(r"Project_BPS/dataset/template_data2.csv")
+                st.dataframe(df_template, height=300)
+                st.session_state['uploaded_df'] = df_template 
+            except FileNotFoundError:
+                st.warning("File template tidak ditemukan, tampilan data dilewati.")
 
-    elif fl is None and st.session_state['uploaded_df'] is None:
-        st.info("📔 Menampilkan data template default karena belum ada file diunggah.")
-        try:
-            df = pd.read_excel(r"Project_BPS/dataset/data_input.xlsx")
-            st.dataframe(df, height=300)
-            st.session_state['uploaded_df'] = df
-        except FileNotFoundError:
-            st.warning("Tampilan data template dilewati.")
-            df = pd.DataFrame() 
-
-if 'uploaded_df' in st.session_state and st.session_state['uploaded_df'] is not None:
-    df = st.session_state['uploaded_df']
 
 #=========================================================================
 #Map
@@ -195,19 +233,23 @@ with col1:
 # FILTER DATA UNGGAHAN 
 #=========================================================================
 st.subheader("Total Data yang Telah Diunggah")
-petugas_col, wilayah_desa_col, sls_col = st.columns(3)
+up1,up2,up3,up4= st.columns(4)
 
 df_for_filter = df_uploaded.copy() 
+df_for_filter['Nama Project'] = df_for_filter['Nama Project'].apply(lambda x: str(x).zfill(6)[:4])
+with up1:
+    wid = st.multiselect("WID:", df_for_filter['WID'].unique())
+df1 = df_for_filter if not wid else df_for_filter[df_for_filter['WID'].isin(wid)]
 
-with petugas_col:
-    petugas = st.multiselect("Nama Petugas:", df_for_filter['Nama Petugas'].unique())
-df2 = df_for_filter if not petugas else df_for_filter[df_for_filter['Nama Petugas'].isin(petugas)]
+with up2:
+    projek = st.multiselect("Nama Project:", df1['Nama Project'].unique())
+df2 = df1 if not projek else df1[df1['Nama Project'].isin(projek)]
 
-with wilayah_desa_col:
+with up3:
     wilayah_desa = st.multiselect("Kode Wilayah Desa:", df2['Kode Wilayah Desa'].unique())
 df3 = df2 if not wilayah_desa else df2[df2['Kode Wilayah Desa'].isin(wilayah_desa)]
 
-with sls_col:    
+with up4:    
     sls = st.multiselect("Nama SLS:", df3['Nama SLS'].unique())
 df_filtered_uploaded = df3 if not sls else df3[df3['Nama SLS'].isin(sls)]
 
@@ -340,20 +382,20 @@ with stat1:
     st.markdown(metric_card("Jumlah Kecamatan", df_csv['nmkec'].nunique()), unsafe_allow_html=True)
     st.markdown(metric_card("Jumlah Desa", df_csv['nmdesa'].nunique()), unsafe_allow_html=True)
     st.markdown(metric_card("Jumlah SLS", df_csv['idsubsls'].nunique()), unsafe_allow_html=True)
-    st.markdown(metric_card("Total SLS Sukses", df_merged['status'].sum()), unsafe_allow_html=True)
+    st.markdown(metric_card("Total SLS ≥ 4", df_merged['status'].sum()), unsafe_allow_html=True)
     st.markdown(metric_card("Total Landmark", round(df_merged['Total Landmark'].sum())), unsafe_allow_html=True)
 
 with stat2:
     total_sls_acc = df_merged['status'].sum()
     jumlah_sls = df_csv['idsubsls'].nunique()
     sls_belum_acc = jumlah_sls - total_sls_acc
-    data_pie = {'Category': ['Total SLS Sukses', 'Total SLS Belum Sukses'], 'Count': [total_sls_acc, sls_belum_acc]}
+    data_pie = {'Category': ['Total SLS ≥ 4', 'Total SLS < 4'], 'Count': [total_sls_acc, sls_belum_acc]}
     df_pie = pd.DataFrame(data_pie)
     fig = px.pie(df_pie, values='Count', names='Category',
-                title='Persentase Status SLS Tervalidasi Sukses VS Belum Sukses',
-                color='Category', color_discrete_map={"Total SLS Sukses": "#A5C09A", "Total SLS Belum Sukses": "#ff5757"})
+                title='Persentase Status SLS Tervalidasi ≥ 4 VS < 4',
+                color='Category', color_discrete_map={"Total SLS ≥ 4": "#A5C09A", "Total SLS < 4": "#ff5757"})
     fig.update_layout(width=800, height=600, title_font_size=25, 
-        title={'text': '<b>Persentase Status SLS Tervalidasi Sukses VS Belum Sukses</b><br><span style="font-weight:normal; font-size:20px">SLS dengan ≥4 landmark dianggap sukses Wilkerstat SE.</span>'},
+        title={'text': '<b>Persentase Status SLS Tervalidasi ≥ 4 VS < 4</b><br><span style="font-weight:normal; font-size:20px"></span>'},
         legend=dict(font=dict(size=20)))
     st.plotly_chart(fig, use_container_width=False)
 
