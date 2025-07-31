@@ -234,19 +234,22 @@ with col1:
 # FILTER DATA UNGGAHAN 
 #=========================================================================
 st.subheader("Total Data yang Telah Diunggah")
-petugas_col, wilayah_desa_col, sls_col = st.columns(3)
+up1,up2,up3,up4= st.columns(4)
 
 df_for_filter = df_uploaded.copy() 
-st.dataframe(df_uploaded)
-with petugas_col:
+with up1:
     wid = st.multiselect("WID:", df_for_filter['WID'].unique())
-df2 = df_for_filter if not wid else df_for_filter[df_for_filter['WID'].isin(petugas)]
+df1 = df_for_filter if not wid else df_for_filter[df_for_filter['WID'].isin(wid)]
 
-with wilayah_desa_col:
+with up2:
+    projek = st.multiselect("Nama Project:", df1['Nama Project'].unique())
+df2 = df1 if not projek else df1[df1['Nama Project'].isin(projek)]
+
+with up3:
     wilayah_desa = st.multiselect("Kode Wilayah Desa:", df2['Kode Wilayah Desa'].unique())
 df3 = df2 if not wilayah_desa else df2[df2['Kode Wilayah Desa'].isin(wilayah_desa)]
 
-with sls_col:    
+with up4:    
     sls = st.multiselect("Nama SLS:", df3['Nama SLS'].unique())
 df_filtered_uploaded = df3 if not sls else df3[df3['Nama SLS'].isin(sls)]
 
