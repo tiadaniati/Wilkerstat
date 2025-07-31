@@ -385,13 +385,13 @@ df_merged['status'] = df_merged['Total Landmark'] >= 4
 with stat1:
     st.markdown(metric_card("Jumlah Kecamatan", df_bandung_csv['nmkec'].nunique()), unsafe_allow_html=True)
     st.markdown(metric_card("Jumlah Desa", df_bandung_csv['nmdesa'].nunique()), unsafe_allow_html=True)
-    st.markdown(metric_card("Jumlah SLS", df_bandung_csv['iddesa'].nunique()), unsafe_allow_html=True)
+    st.markdown(metric_card("Jumlah SLS", df_bandung_csv['idsls'].nunique()), unsafe_allow_html=True)
     st.markdown(metric_card("Total SLS ≥ 4", df_merged['status'].sum()), unsafe_allow_html=True)
     st.markdown(metric_card("Total Landmark", round(df_merged['Total Landmark'].sum())), unsafe_allow_html=True)
 
 with stat2:
     total_sls_acc = df_merged['status'].sum()
-    jumlah_sls = df_bandung_csv['iddesa'].nunique()
+    jumlah_sls = df_bandung_csv['idsls'].nunique()
     sls_belum_acc = jumlah_sls - total_sls_acc
     data_pie = {'Category': ['Total SLS ≥ 4', 'Total SLS < 4'], 'Count': [total_sls_acc, sls_belum_acc]}
     df_pie = pd.DataFrame(data_pie)
