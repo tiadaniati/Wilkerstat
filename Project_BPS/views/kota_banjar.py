@@ -315,7 +315,7 @@ try:
         'idsls': 'Kode Wilayah SLS', 'iddesa' : 'Kode Wilayah Desa', 'kdprov': 'Kode Provinsi', 
         'nmprov': 'Nama Provinsi', 'kdkab': 'Kode Kabupaten/Kota', 'nmkab': 'Nama Kabupaten/Kota', 
         'kdkec': 'Kode Kecamatan', 'nmkec': 'Nama Kecamatan', 'kddesa': 'Kode Desa', 
-        'nmdesa': 'Nama Desa', 'kdsls': 'Kode SLS', 'nmsls': 'Nama SLS', 'petugas_kode' : 'Kode Petugas',
+        'nmdesa': 'Nama Desa', 'kdsls': 'Kode SLS', 'nama_sls': 'Nama SLS', 'petugas_kode' : 'Kode Petugas',
         'petugas_nama': 'Nama Petugas', 'pengawas_kode': 'Kode Pengawas', 'pengawas_nama': 'Nama Pengawas'
     }
     df = df.rename(columns=rename_mapping)
