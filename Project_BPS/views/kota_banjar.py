@@ -373,6 +373,8 @@ tampilan_kolom = [
     'Kecamatan',
     'Desa',
     'SLS',
+    'Nama Petugas',
+    'Nama Pengawas',
     'Total Landmark'
 ]
 filtered_df = filtered_df[tampilan_kolom]
