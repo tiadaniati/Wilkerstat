@@ -114,13 +114,13 @@ with col2:
                         df = pd.read_excel(fl)
 
                     column_map = {
-                        'id': 'ID', 'nama_krt': 'Nama Petugas', 'iddesa':'Kode Wilayah Desa',
+                        'id': 'ID', 'iddesa':'Kode Wilayah Desa',
                         'deskripsi_project':'Nama SLS', 'latitude': 'Latitude', 'longitude':'Longitude',
-                        'user_upload_at':'Waktu Submit'
+                        'user_upload_at':'Waktu Submit', 'wid': 'WID', 'nm_project': 'Nama Project'
                     }
                     df = df.rename(columns=column_map)
                     
-                    required_cols = ['ID','Nama Petugas','Kode Wilayah Desa','Nama SLS','Latitude','Longitude','Waktu Submit']
+                    required_cols = ['ID','WID','Nama Project','Kode Wilayah Desa','Nama SLS','Latitude','Longitude','Waktu Submit']
                     for col in required_cols:
                         if col not in df.columns:
                             df[col] = None
@@ -133,7 +133,8 @@ with col2:
                     try:
                         df.to_sql("uploaded_kota_banjar", con=conn_st.engine, if_exists=if_exists_option, index=False, dtype={
                             'ID': sql_types.VARCHAR(255),
-                            'Nama Petugas': sql_types.VARCHAR(255),
+                            'WID': sql_types.VARCHAR(255),
+                            'Nama Project': sql_types.VARCHAR(255),
                             'Kode Wilayah Desa': sql_types.VARCHAR(255),
                             'Nama SLS': sql_types.VARCHAR(255),
                             'Latitude': sql_types.FLOAT,
