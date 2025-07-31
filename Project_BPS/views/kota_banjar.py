@@ -302,7 +302,7 @@ try:
         'kdkec': sql_types.VARCHAR(10), 'nmkec': sql_types.VARCHAR(100), 'kddesa': sql_types.VARCHAR(10),
         'nmdesa': sql_types.VARCHAR(100), 'kdsls': sql_types.VARCHAR(10), 'nama_sls': sql_types.VARCHAR(100),
         'petugas_kode': sql_types.VARCHAR(100), 'petugas_nama': sql_types.VARCHAR(100), 'pengawas_kode': sql_types.VARCHAR(100), 
-        'pengawas_nama': sql_types.VARCHAR(), 'nama_ketua': sql_types.VARCHAR(100), 'total_landmark': sql_types.INT()
+        'pengawas_nama': sql_types.VARCHAR(100), 'nama_ketua': sql_types.VARCHAR(100), 'total_landmark': sql_types.INT()
     })
 
 except Exception as e:
