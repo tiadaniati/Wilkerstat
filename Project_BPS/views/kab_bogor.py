@@ -297,11 +297,12 @@ for kolom in ['kdsls']:
 
 try:
     df_ref.to_sql("kab_bogor", con=conn_st.engine, if_exists="replace", index=False, dtype={
-        'idsubsls': sql_types.VARCHAR(20), 'iddesa': sql_types.VARCHAR(20), 'kdprov': sql_types.VARCHAR(10),
+        'idsls': sql_types.VARCHAR(20), 'iddesa': sql_types.VARCHAR(20), 'kdprov': sql_types.VARCHAR(10),
         'nmprov': sql_types.VARCHAR(100), 'kdkab': sql_types.VARCHAR(10), 'nmkab': sql_types.VARCHAR(100),
         'kdkec': sql_types.VARCHAR(10), 'nmkec': sql_types.VARCHAR(100), 'kddesa': sql_types.VARCHAR(10),
-        'nmdesa': sql_types.VARCHAR(100), 'kdsls': sql_types.VARCHAR(10), 'nmsls': sql_types.VARCHAR(100),
-        'nama_ketua': sql_types.VARCHAR(100), 'total_landmark': sql_types.INT()
+        'nmdesa': sql_types.VARCHAR(100), 'kdsls': sql_types.VARCHAR(10), 'nama_sls': sql_types.VARCHAR(100),
+        'petugas_kode': sql_types.VARCHAR(100), 'petugas_nama': sql_types.VARCHAR(100), 'pengawas_kode': sql_types.VARCHAR(100), 
+        'pengawas_nama': sql_types.VARCHAR(100), 'nama_ketua': sql_types.VARCHAR(100), 'total_landmark': sql_types.INT()
     })
 
 except Exception as e:
@@ -311,17 +312,15 @@ try:
     df = conn_st.query("SELECT * FROM kab_bogor;", ttl=600)
     
     rename_mapping = {
-        'idsubsls': 'Kode Wilayah SLS', 'iddesa' : 'Kode Wilayah Desa', 'kdprov': 'Kode Provinsi', 
+        'idsls': 'Kode Wilayah SLS', 'iddesa' : 'Kode Wilayah Desa', 'kdprov': 'Kode Provinsi', 
         'nmprov': 'Nama Provinsi', 'kdkab': 'Kode Kabupaten/Kota', 'nmkab': 'Nama Kabupaten/Kota', 
         'kdkec': 'Kode Kecamatan', 'nmkec': 'Nama Kecamatan', 'kddesa': 'Kode Desa', 
-        'nmdesa': 'Nama Desa', 'kdsls': 'Kode SLS', 'nmsls': 'Nama SLS', 'nama_ketua' : 'Nama Ketua SLS'
+        'nmdesa': 'Nama Desa', 'kdsls': 'Kode SLS', 'nama_sls': 'Nama SLS', 'petugas_kode' : 'Kode Petugas',
+        'petugas_nama': 'Nama Petugas', 'pengawas_kode': 'Kode Pengawas', 'pengawas_nama': 'Nama Pengawas'
     }
     df = df.rename(columns=rename_mapping)
 except Exception as e:
     st.error(f"Gagal mengambil data 'kab_bogor' dari DB: {e}")
-
-df['Kode Wilayah Desa'] = df['Kode Wilayah Desa'].astype(str)
-landmark['Kode Wilayah Desa'] = landmark['Kode Wilayah Desa'].astype(str)
 
 df['Kode Wilayah Desa'] = df['Kode Wilayah Desa'].astype(str)
 landmark['Kode Wilayah Desa'] = landmark['Kode Wilayah Desa'].astype(str)
@@ -335,9 +334,9 @@ df_merged['Kabupaten/Kota'] = ' [' + df_merged['Kode Kabupaten/Kota'].astype(str
 df_merged['Desa'] = ' [' + df_merged['Kode Desa'].astype(str) + ']' + ' '+ df_merged['Nama Desa'].astype(str) 
 df_merged['SLS'] = '[' + df_merged['Kode SLS'].astype(str) + ']' + ' ' + df_merged['Nama SLS'].astype(str)
 
-
 st.subheader("Filter Data")
 col11, col22, col33, col44 = st.columns(4)
+
 filtered_df = df_merged
 
 with col11:
@@ -371,6 +370,10 @@ tampilan_kolom = [
     'Kecamatan',
     'Desa',
     'SLS',
+    'Kode Petugas',
+    'Nama Petugas',
+    'Kode Pengawas',
+    'Nama Pengawas',
     'Total Landmark'
 ]
 filtered_df = filtered_df[tampilan_kolom]
@@ -381,15 +384,15 @@ st.dataframe(filtered_df)
 df_merged['status'] = df_merged['Total Landmark'] >= 4
 
 with stat1:
-    st.markdown(metric_card("Jumlah Kecamatan", df_bandung_csv['nmkec'].nunique()), unsafe_allow_html=True)
-    st.markdown(metric_card("Jumlah Desa", df_bandung_csv['nmdesa'].nunique()), unsafe_allow_html=True)
-    st.markdown(metric_card("Jumlah SLS", df_bandung_csv['idsubsls'].nunique()), unsafe_allow_html=True)
+    st.markdown(metric_card("Jumlah Kecamatan", df_kabbogor_csv['nmkec'].nunique()), unsafe_allow_html=True)
+    st.markdown(metric_card("Jumlah Desa", df_kabbogor_csv['nmdesa'].nunique()), unsafe_allow_html=True)
+    st.markdown(metric_card("Jumlah SLS", df_kabbogor_csv['idsls'].nunique()), unsafe_allow_html=True)
     st.markdown(metric_card("Total SLS ≥ 4", df_merged['status'].sum()), unsafe_allow_html=True)
     st.markdown(metric_card("Total Landmark", round(df_merged['Total Landmark'].sum())), unsafe_allow_html=True)
 
 with stat2:
     total_sls_acc = df_merged['status'].sum()
-    jumlah_sls = df_bandung_csv['idsubsls'].nunique()
+    jumlah_sls = df_kabbogor_csv['idsls'].nunique()
     sls_belum_acc = jumlah_sls - total_sls_acc
     data_pie = {'Category': ['Total SLS ≥ 4', 'Total SLS < 4'], 'Count': [total_sls_acc, sls_belum_acc]}
     df_pie = pd.DataFrame(data_pie)
