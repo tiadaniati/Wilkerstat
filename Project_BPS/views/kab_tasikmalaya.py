@@ -281,7 +281,7 @@ else:
 
 st.title("Database Kabupaten Tasikmalaya")
 
-df_ref = df_tasikmalaya_csv.copy()
+df_ref = df_csv.copy()
 
 kolom_kode = ['idsubsls', 'iddesa', 'kdprov', 'kdkab', 'kdkec', 'kddesa', 'kdsls']
 for kolom in kolom_kode:
