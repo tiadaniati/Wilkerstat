@@ -49,7 +49,8 @@ col1, col2 = st.columns((2, 1))
 
 #=========================================================================
 #Upload Data
-#=======================================with col2:
+#=======================================
+with col2:
     if 'authenticated' not in st.session_state:
         st.session_state.authenticated = False
     if 'uploaded_df' not in st.session_state:
