@@ -237,7 +237,7 @@ st.subheader("Total Data yang Telah Diunggah")
 petugas_col, wilayah_desa_col, sls_col = st.columns(3)
 
 df_for_filter = df_uploaded.copy() 
-
+st.dataframe(df_uploaded)
 with petugas_col:
     wid = st.multiselect("WID:", df_for_filter['WID'].unique())
 df2 = df_for_filter if not wid else df_for_filter[df_for_filter['WID'].isin(petugas)]
