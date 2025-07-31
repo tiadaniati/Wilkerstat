@@ -237,7 +237,7 @@ st.subheader("Total Data yang Telah Diunggah")
 up1,up2,up3,up4= st.columns(4)
 
 df_for_filter = df_uploaded.copy() 
-df_for_filter['Nama Project'] = df_for_filter['Nama Project'].astype(str).str[:4]
+df_for_filter['Nama Project'] = df_for_filter['Nama Project'].apply(lambda x: str(x).zfill(6)[:4])
 with up1:
     wid = st.multiselect("WID:", df_for_filter['WID'].unique())
 df1 = df_for_filter if not wid else df_for_filter[df_for_filter['WID'].isin(wid)]
