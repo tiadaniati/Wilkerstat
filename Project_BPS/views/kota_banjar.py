@@ -1,4 +1,4 @@
-import streamlit as st
+ximport streamlit as st
 import pandas as pd
 import os
 import plotly.express as px
@@ -385,9 +385,9 @@ st.dataframe(filtered_df)
 df_merged['status'] = df_merged['Total Landmark'] >= 4
 
 with stat1:
-    st.markdown(metric_card("Jumlah Kecamatan", df_bandung_csv['nmkec'].nunique()), unsafe_allow_html=True)
-    st.markdown(metric_card("Jumlah Desa", df_bandung_csv['nmdesa'].nunique()), unsafe_allow_html=True)
-    st.markdown(metric_card("Jumlah SLS", df_bandung_csv['iddesa'].nunique()), unsafe_allow_html=True)
+    st.markdown(metric_card("Jumlah Kecamatan", df_banjar_csv['nmkec'].nunique()), unsafe_allow_html=True)
+    st.markdown(metric_card("Jumlah Desa", df_banjar_csv['nmdesa'].nunique()), unsafe_allow_html=True)
+    st.markdown(metric_card("Jumlah SLS", df_banjar_csv['iddesa'].nunique()), unsafe_allow_html=True)
     st.markdown(metric_card("Total SLS ≥ 4", df_merged['status'].sum()), unsafe_allow_html=True)
     st.markdown(metric_card("Total Landmark", round(df_merged['Total Landmark'].sum())), unsafe_allow_html=True)
 
