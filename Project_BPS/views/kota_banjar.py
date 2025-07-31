@@ -153,7 +153,7 @@ with col2:
         else:
             st.info("📔 Menampilkan data template default karena belum ada file diunggah.")
             try:
-                df_template = pd.read_csv(r"/Users/jibrilnikki/Documents/Code/Project_BPS/dataset/template_data2.csv")
+                df_template = pd.read_csv(r"Project_BPS/dataset/template_data2.csv")
                 st.dataframe(df_template, height=300)
                 st.session_state['uploaded_df'] = df_template 
             except FileNotFoundError:
