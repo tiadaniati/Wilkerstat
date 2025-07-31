@@ -148,4 +148,4 @@ with tab_chatbot:
         3.  Klik tombol Kirim Pesan.
         4.  Sistem akan menjawab pertanyaan Anda berdasarkan data yang tersedia di dashboard.
         """)
-        st.info("☞ **Perlu digarisbawahi bahwa chatbot ini di design hanya untuk menjawab pertanyaan seputar database Wilkerstat dan tidak dapat menjawab hal-hal yang bersifat general")
+        st.info("☞ **Perlu digarisbawahi bahwa chatbot ini di design hanya untuk menjawab pertanyaan seputar database Wilkerstat dan tidak dapat menjawab hal-hal yang bersifat general**")
