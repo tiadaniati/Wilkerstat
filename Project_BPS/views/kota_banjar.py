@@ -239,8 +239,8 @@ petugas_col, wilayah_desa_col, sls_col = st.columns(3)
 df_for_filter = df_uploaded.copy() 
 
 with petugas_col:
-    petugas = st.multiselect("Nama Petugas:", df_for_filter['Nama Petugas'].unique())
-df2 = df_for_filter if not petugas else df_for_filter[df_for_filter['Nama Petugas'].isin(petugas)]
+    wid = st.multiselect("WID:", df_for_filter['WID'].unique())
+df2 = df_for_filter if not wid else df_for_filter[df_for_filter['WID'].isin(petugas)]
 
 with wilayah_desa_col:
     wilayah_desa = st.multiselect("Kode Wilayah Desa:", df2['Kode Wilayah Desa'].unique())
