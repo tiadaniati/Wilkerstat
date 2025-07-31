@@ -236,7 +236,7 @@ st.subheader("Total Data yang Telah Diunggah")
 up1,up2,up3,up4= st.columns(4)
 
 df_for_filter = df_uploaded.copy() 
-
+st.dataframe(df_for_filter)
 df_for_filter['Nama Project'] = df_for_filter['Nama Project'].apply(lambda x: str(x).zfill(6)[:4])
 
 with up1:
