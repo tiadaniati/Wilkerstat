@@ -59,7 +59,7 @@ with col2:
         st.session_state.uploaded_filename = None
 
     CREDENTIALS = {
-        "nikki": "123"
+        "admin3271": "berkibar"
     }
 
     if not st.session_state.authenticated:
@@ -382,20 +382,20 @@ with stat1:
     st.markdown(metric_card("Jumlah Kecamatan", df_csv['nmkec'].nunique()), unsafe_allow_html=True)
     st.markdown(metric_card("Jumlah Desa", df_csv['nmdesa'].nunique()), unsafe_allow_html=True)
     st.markdown(metric_card("Jumlah SLS", df_csv['idsubsls'].nunique()), unsafe_allow_html=True)
-    st.markdown(metric_card("Total SLS Sukses", df_merged['status'].sum()), unsafe_allow_html=True)
+    st.markdown(metric_card("Total SLS ≥ 4", df_merged['status'].sum()), unsafe_allow_html=True)
     st.markdown(metric_card("Total Landmark", round(df_merged['Total Landmark'].sum())), unsafe_allow_html=True)
 
 with stat2:
     total_sls_acc = df_merged['status'].sum()
     jumlah_sls = df_csv['idsubsls'].nunique()
     sls_belum_acc = jumlah_sls - total_sls_acc
-    data_pie = {'Category': ['Total SLS Sukses', 'Total SLS Belum Sukses'], 'Count': [total_sls_acc, sls_belum_acc]}
+    data_pie = {'Category': ['Total SLS ≥ 4', 'Total SLS < 4'], 'Count': [total_sls_acc, sls_belum_acc]}
     df_pie = pd.DataFrame(data_pie)
     fig = px.pie(df_pie, values='Count', names='Category',
-                title='Persentase Status SLS Tervalidasi Sukses VS Belum Sukses',
-                color='Category', color_discrete_map={"Total SLS Sukses": "#A5C09A", "Total SLS Belum Sukses": "#ff5757"})
+                title='Persentase Status SLS Tervalidasi ≥ 4 VS < 4',
+                color='Category', color_discrete_map={"Total SLS ≥ 4": "#A5C09A", "Total SLS < 4": "#ff5757"})
     fig.update_layout(width=800, height=600, title_font_size=25, 
-        title={'text': '<b>Persentase Status SLS Tervalidasi Sukses VS Belum Sukses</b><br><span style="font-weight:normal; font-size:20px">SLS dengan ≥4 landmark dianggap sukses Wilkerstat SE.</span>'},
+        title={'text': '<b>Persentase Status SLS Tervalidasi ≥ 4 VS < 4</b><br><span style="font-weight:normal; font-size:20px"></span>'},
         legend=dict(font=dict(size=20)))
     st.plotly_chart(fig, use_container_width=False)
 
