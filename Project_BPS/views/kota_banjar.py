@@ -395,10 +395,10 @@ with stat2:
     data_pie = {'Category': ['Total SLS Sukses', 'Total SLS Belum Sukses'], 'Count': [total_sls_acc, sls_belum_acc]}
     df_pie = pd.DataFrame(data_pie)
     fig = px.pie(df_pie, values='Count', names='Category',
-                title='Persentase Status SLS Tervalidasi Sukses VS Belum Sukses',
-                color='Category', color_discrete_map={"Total SLS Sukses": "#A5C09A", "Total SLS Belum Sukses": "#ff5757"})
+                title='Persentase Status SLS Tervalidasi ≥4 VS < 4',
+                color='Category', color_discrete_map={"Total SLS ≥ 4": "#A5C09A", "Total SLS < 4": "#ff5757"})
     fig.update_layout(width=800, height=600, title_font_size=25, 
-        title={'text': '<b>Persentase Status SLS Tervalidasi Sukses VS Belum Sukses</b><br><span style="font-weight:normal; font-size:20px">SLS dengan ≥4 landmark dianggap sukses Wilkerstat SE.</span>'},
+        title={'text': '<b>Persentase Status SLS Tervalidasi ≥ 4 VS < 4 </b><br><span style="font-weight:normal; font-size:20px"></span>'},
         legend=dict(font=dict(size=20)))
     st.plotly_chart(fig, use_container_width=False)
 
