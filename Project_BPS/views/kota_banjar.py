@@ -159,6 +159,77 @@ with col2:
                 st.session_state['uploaded_df'] = df_template 
             except FileNotFoundError:
                 st.warning("File template tidak ditemukan, tampilan data dilewati.")
+
+
+#=========================================================================
+#Map
+#=========================================================================
+with col1:
+    st.header("Peta Lokasi")
+    
+
+    def fetch_uploaded_data():
+        """Fetches uploaded location data from the database."""
+        try:
+            df_query = conn_st.query("SELECT * FROM uploaded_kota_banjar;", ttl=600)
+            return df_query
+        except Exception as e:
+            st.warning(f"Tidak dapat mengambil data dari DB untuk peta: {e}")
+            return pd.DataFrame()
+
+    df_uploaded = fetch_uploaded_data()
+
+    geojson_file = 'Project_BPS/Geolocation/map_kota_banjar.geojson'
+    try:
+        gdf = gpd.read_file(geojson_file)
+    except Exception as e:
+        st.error(f"⚠️ Gagal membaca file GeoJSON: {e}.")
+        gdf = gpd.GeoDataFrame() 
+
+    m = folium.Map(
+        location=[-7.374585, 108.558189],
+        zoom_start=13,
+        tiles='OpenStreetMap'
+    )
+
+    if not gdf.empty:
+        folium.GeoJson(
+            data=gdf,
+            style_function=lambda feature: {
+                'fillColor': 'blue', 'color': 'black', 'weight': 0.9, 'fillOpacity': 0
+            },
+            tooltip=folium.features.GeoJsonTooltip(fields=['nmkab', 'nmkec'])
+        ).add_to(m)
+
+    if not df_uploaded.empty:
+        st.info(f"Menampilkan {len(df_uploaded)} lokasi dari database.")
+        marker_cluster = MarkerCluster(name="Lokasi Petugas").add_to(m)
+        df_uploaded.dropna(subset=['Latitude', 'Longitude'], inplace=True)
+
+        marker_cluster = MarkerCluster(name="Lokasi Petugas").add_to(m)
+
+        df_uploaded.dropna(subset=['Latitude', 'Longitude'], inplace=True)
+
+        for idx, row in df_uploaded.iterrows():
+            try:
+                lat = float(row['Latitude']); lon = float(row['Longitude'])
+                popup_html = f"""
+                <b>Petugas:</b> {row.get('Nama Petugas', 'N/A')}<br>
+                <b>Lokasi:</b> {row.get('Nama SLS', 'N/A')}<br>
+                <b>Waktu:</b> {row.get('Waktu Submit', 'N/A')}<br>
+                <b>Koordinat:</b> ({lat}, {lon})
+                """
+                folium.Marker(
+                    location=[lat, lon], 
+                    popup=folium.Popup(popup_html, max_width=300),
+                    tooltip=f"{row.get('Nama Petugas', 'N/A')} - {row.get('Nama SLS', 'N/A')}",
+                    icon=folium.Icon(color='blue', icon='info-sign')
+                ).add_to(marker_cluster)
+            except (ValueError, TypeError):
+                pass
+
+    folium.LayerControl().add_to(m)    
+    folium_static(m, width=None, height=650)
 #=========================================================================
 # FILTER DATA UNGGAHAN 
 #=========================================================================
@@ -341,74 +412,3 @@ with stat3:
     fig.update_traces(marker_color='#E8B991')
     fig.update_layout(width=800, height=600, title_font_size=25, legend=dict(font=dict(size=20)))
     st.plotly_chart(fig, use_container_width=True)
-
-
-#=========================================================================
-#Map
-#=========================================================================
-with col1:
-    st.header("Peta Lokasi")
-    
-
-    def fetch_uploaded_data():
-        """Fetches uploaded location data from the database."""
-        try:
-            df_query = conn_st.query("SELECT * FROM uploaded_kota_banjar;", ttl=600)
-            return df_query
-        except Exception as e:
-            st.warning(f"Tidak dapat mengambil data dari DB untuk peta: {e}")
-            return pd.DataFrame()
-
-    df_uploaded = fetch_uploaded_data()
-
-    geojson_file = 'Project_BPS/Geolocation/map_kota_banjar.geojson'
-    try:
-        gdf = gpd.read_file(geojson_file)
-    except Exception as e:
-        st.error(f"⚠️ Gagal membaca file GeoJSON: {e}.")
-        gdf = gpd.GeoDataFrame() 
-
-    m = folium.Map(
-        location=[-7.374585, 108.558189],
-        zoom_start=13,
-        tiles='OpenStreetMap'
-    )
-
-    if not gdf.empty:
-        folium.GeoJson(
-            data=gdf,
-            style_function=lambda feature: {
-                'fillColor': 'blue', 'color': 'black', 'weight': 0.9, 'fillOpacity': 0
-            },
-            tooltip=folium.features.GeoJsonTooltip(fields=['nmkab', 'nmkec'])
-        ).add_to(m)
-
-    if not df_uploaded.empty:
-        st.info(f"Menampilkan {len(df_uploaded)} lokasi dari database.")
-        marker_cluster = MarkerCluster(name="Lokasi Petugas").add_to(m)
-        df_uploaded.dropna(subset=['Latitude', 'Longitude'], inplace=True)
-
-        marker_cluster = MarkerCluster(name="Lokasi Petugas").add_to(m)
-
-        df_uploaded.dropna(subset=['Latitude', 'Longitude'], inplace=True)
-
-        for idx, row in df_uploaded.iterrows():
-            try:
-                lat = float(row['Latitude']); lon = float(row['Longitude'])
-                popup_html = f"""
-                <b>Petugas:</b> {row.get('Nama Petugas', 'N/A')}<br>
-                <b>Lokasi:</b> {row.get('Nama SLS', 'N/A')}<br>
-                <b>Waktu:</b> {row.get('Waktu Submit', 'N/A')}<br>
-                <b>Koordinat:</b> ({lat}, {lon})
-                """
-                folium.Marker(
-                    location=[lat, lon], 
-                    popup=folium.Popup(popup_html, max_width=300),
-                    tooltip=f"{row.get('Nama Petugas', 'N/A')} - {row.get('Nama SLS', 'N/A')}",
-                    icon=folium.Icon(color='blue', icon='info-sign')
-                ).add_to(marker_cluster)
-            except (ValueError, TypeError):
-                pass
-
-    folium.LayerControl().add_to(m)    
-    folium_static(m, width=None, height=650)
