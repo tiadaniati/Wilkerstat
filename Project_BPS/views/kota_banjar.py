@@ -297,12 +297,14 @@ for kolom in ['kdsls']:
 
 try:
     df_ref.to_sql("kota_banjar", con=conn_st.engine, if_exists="replace", index=False, dtype={
-        'idsubsls': sql_types.VARCHAR(20), 'iddesa': sql_types.VARCHAR(20), 'kdprov': sql_types.VARCHAR(10),
+        'idsls': sql_types.VARCHAR(20), 'iddesa': sql_types.VARCHAR(20), 'kdprov': sql_types.VARCHAR(10),
         'nmprov': sql_types.VARCHAR(100), 'kdkab': sql_types.VARCHAR(10), 'nmkab': sql_types.VARCHAR(100),
         'kdkec': sql_types.VARCHAR(10), 'nmkec': sql_types.VARCHAR(100), 'kddesa': sql_types.VARCHAR(10),
-        'nmdesa': sql_types.VARCHAR(100), 'kdsls': sql_types.VARCHAR(10), 'nmsls': sql_types.VARCHAR(100),
-        'nama_ketua': sql_types.VARCHAR(100), 'total_landmark': sql_types.INT()
+        'nmdesa': sql_types.VARCHAR(100), 'kdsls': sql_types.VARCHAR(10), 'nama_sls': sql_types.VARCHAR(100),
+        'petugas_kode': sql_types.VARCHAR(100), 'petugas_nama': sql_types.VARCHAR(), 'pengawas_kode': sql_types.VARCHAR(), 
+        'pengawas_nama': sql_types.VARCHAR(), 'nama_ketua': sql_types.VARCHAR(100), 'total_landmark': sql_types.INT()
     })
+
 except Exception as e:
     st.warning(f"Gagal me-refresh data 'kota_banjar' di DB: {e}")
 
@@ -310,10 +312,11 @@ try:
     df = conn_st.query("SELECT * FROM kota_banjar;", ttl=600)
     
     rename_mapping = {
-        'idsubsls': 'Kode Wilayah SLS', 'iddesa' : 'Kode Wilayah Desa', 'kdprov': 'Kode Provinsi', 
+        'idsls': 'Kode Wilayah SLS', 'iddesa' : 'Kode Wilayah Desa', 'kdprov': 'Kode Provinsi', 
         'nmprov': 'Nama Provinsi', 'kdkab': 'Kode Kabupaten/Kota', 'nmkab': 'Nama Kabupaten/Kota', 
         'kdkec': 'Kode Kecamatan', 'nmkec': 'Nama Kecamatan', 'kddesa': 'Kode Desa', 
-        'nmdesa': 'Nama Desa', 'kdsls': 'Kode SLS', 'nmsls': 'Nama SLS', 'nama_ketua' : 'Nama Ketua SLS'
+        'nmdesa': 'Nama Desa', 'kdsls': 'Kode SLS', 'nmsls': 'Nama SLS', 'petugas_kode' : 'Kode Petugas',
+        'petugas_nama': 'Nama Petugas', 'pengawas_kode': 'Kode Pengawas', 'pengawas_nama': 'Nama Pengawas'
     }
     df = df.rename(columns=rename_mapping)
 except Exception as e:
@@ -321,6 +324,9 @@ except Exception as e:
 
 df['Kode Wilayah Desa'] = df['Kode Wilayah Desa'].astype(str)
 landmark['Kode Wilayah Desa'] = landmark['Kode Wilayah Desa'].astype(str)
+
+st.dataframe(df)
+st.dataframe(landmark)
 
 df_merged = pd.merge(df, landmark, on=['Kode Wilayah Desa', 'Nama SLS'], how='left')
 df_merged['total_landmark'] = df_merged['total_landmark'].fillna(0)
