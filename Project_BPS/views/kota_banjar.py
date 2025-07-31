@@ -59,7 +59,7 @@ with col2:
         st.session_state.uploaded_filename = None
 
     CREDENTIALS = {
-        "nikki": "123"
+        "admin3279": "berkibar"
     }
 
     if not st.session_state.authenticated:
