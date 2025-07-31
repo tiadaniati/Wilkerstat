@@ -398,7 +398,7 @@ with stat2:
     data_pie = {'Category': ['Total SLS ≥ 4', 'Total SLS < 4'], 'Count': [total_sls_acc, sls_belum_acc]}
     df_pie = pd.DataFrame(data_pie)
     fig = px.pie(df_pie, values='Count', names='Category',
-                title='Persentase Status SLS Tervalidasi ≥4 VS < 4',
+                title='Persentase Status SLS Tervalidasi ≥ 4 VS < 4',
                 color='Category', color_discrete_map={"Total SLS ≥ 4": "#A5C09A", "Total SLS < 4": "#ff5757"})
     fig.update_layout(width=800, height=600, title_font_size=25, 
         title={'text': '<b>Persentase Status SLS Tervalidasi ≥ 4 VS < 4 </b><br><span style="font-weight:normal; font-size:20px"></span>'},
