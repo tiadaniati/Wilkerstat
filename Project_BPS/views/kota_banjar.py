@@ -391,7 +391,7 @@ with stat1:
 
 with stat2:
     total_sls_acc = df_merged['status'].sum()
-    jumlah_sls = df_banjar_csv['idsubsls'].nunique()
+    jumlah_sls = df_banjar_csv['iddesa'].nunique()
     sls_belum_acc = jumlah_sls - total_sls_acc
     data_pie = {'Category': ['Total SLS Sukses', 'Total SLS Belum Sukses'], 'Count': [total_sls_acc, sls_belum_acc]}
     df_pie = pd.DataFrame(data_pie)
