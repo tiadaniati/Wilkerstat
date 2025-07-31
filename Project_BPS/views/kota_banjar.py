@@ -370,10 +370,10 @@ tampilan_kolom = [
     'Kecamatan',
     'Desa',
     'SLS',
-    'Nama Petugas',
     'Kode Petugas',
-    'Nama Pengawas',
+    'Nama Petugas',
     'Kode Pengawas',
+    'Nama Pengawas',
     'Total Landmark'
 ]
 
@@ -395,7 +395,7 @@ with stat2:
     total_sls_acc = df_merged['status'].sum()
     jumlah_sls = df_banjar_csv['iddesa'].nunique()
     sls_belum_acc = jumlah_sls - total_sls_acc
-    data_pie = {'Category': ['Total SLS Sukses', 'Total SLS Belum Sukses'], 'Count': [total_sls_acc, sls_belum_acc]}
+    data_pie = {'Category': ['Total SLS ≥ 4', 'Total SLS < 4'], 'Count': [total_sls_acc, sls_belum_acc]}
     df_pie = pd.DataFrame(data_pie)
     fig = px.pie(df_pie, values='Count', names='Category',
                 title='Persentase Status SLS Tervalidasi ≥4 VS < 4',
