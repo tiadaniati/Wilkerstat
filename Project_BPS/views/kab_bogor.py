@@ -283,6 +283,12 @@ else:
 st.title("Database Kabupaten Bogor")
 
 df_ref = df_kabbogor_csv.copy()
+df_ref['petugas_kode'] = df_ref['petugas_kode'].apply(
+    lambda x: str(int(float(x))) if pd.notna(x) else x
+)
+df_ref['pengawas_kode'] = df_ref['pengawas_kode'].apply(
+    lambda x: str(int(float(x))) if pd.notna(x) else x
+)
 
 kolom_kode = ['idsubsls', 'iddesa', 'kdprov', 'kdkab', 'kdkec', 'kddesa', 'kdsls']
 for kolom in kolom_kode:
