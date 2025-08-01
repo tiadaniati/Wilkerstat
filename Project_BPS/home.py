@@ -134,8 +134,6 @@ with kanan:
 #======================================================================================================
 st.title("Database Provinsi Jawa Barat")
 
-
-# Step 1: Simpan data awal ke data_provinsi
 try:
     df_prov.to_sql("data_provinsi", con=conn_st.engine, if_exists="replace", index=False, dtype={
         'kode_kotakab': sql_types.VARCHAR(100),
@@ -143,27 +141,12 @@ try:
         'jumlah_kec': sql_types.INT,
         'jumlah_desa': sql_types.INT
     })
+  
 except Exception as e:
     st.warning(f"Gagal mengunggah data referensi ke database: {e}")
-
-# Step 2: Tambahkan kolom Total Landmark ke data_provinsi
-def nama_tabel_db(nama_kotakab):
-    nama = nama_kotakab.lower().strip()
-    if nama.startswith("kabupaten"):
-        nama = nama.replace("kabupaten", "").strip()
-        nama = "kab_" + nama.replace(" ", "")
-    elif nama.startswith("kota"):
-        nama = nama.replace("kota", "").strip()
-        nama = "kota_" + nama.replace(" ", "")
-    else:
-        nama = nama.replace(" ", "_")
-    return nama
-
 try:
-    # Ambil data dari database
     df_from_db = conn_st.query("SELECT * FROM data_provinsi", ttl=600)
     
-    # Rename kolom agar lebih readable
     rename_mapping = {
         'kode_kotakab': 'Kode Kabupaten/Kota', 
         'nama_kotakab': 'Nama Kabupaten/Kota', 
@@ -172,33 +155,9 @@ try:
     }
     df_from_db = df_from_db.rename(columns=rename_mapping)
 
-    # Hitung total landmark dari masing-masing tabel kab/kota
-    list_kota = df_from_db['Nama Kabupaten/Kota'].tolist()
-    landmark_dict = {}
-
-    for kota in list_kota:
-        nama_tabel = nama_tabel_db(kota)
-        try:
-            df_kota = conn_st.query(f"SELECT `Total Landmark` FROM {nama_tabel};", ttl=600)
-            total = df_kota['Total Landmark'].sum()
-            landmark_dict[kota] = total
-        except Exception as e:
-            st.warning(f"Tabel '{nama_tabel}' tidak ditemukan: {e}")
-            landmark_dict[kota] = 0
-
-    df_landmark = pd.DataFrame(list(landmark_dict.items()), columns=['Nama Kabupaten/Kota', 'Total Landmark'])
-
-    # Gabungkan kembali ke dataframe utama
-    df_from_db = pd.merge(df_from_db, df_landmark, on='Nama Kabupaten/Kota', how='left')
-
-except Exception as e:
-    st.error(f"Gagal mengambil atau menghitung total landmark: {e}")
-
-# Step 3: Tampilkan dataframe dengan filter seperti sebelumnya
-try:
     filter_columns = ['Kode Kabupaten/Kota', 'Nama Kabupaten/Kota']
     cols = st.columns(len(filter_columns))  
-
+    
     filtered_df = df_from_db.copy()
 
     for i, col_name in enumerate(filter_columns):
@@ -211,4 +170,4 @@ try:
     st.dataframe(filtered_df)
 
 except Exception as e:
-    st.error(f"Gagal memfilter atau menampilkan data: {e}")
+    st.error(f"Gagal mengambil atau memfilter data dari database: {e}")
