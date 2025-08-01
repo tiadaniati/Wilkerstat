@@ -366,9 +366,6 @@ def update_rekap_total_landmark(df_merged, nama_kotakab, conn_engine):
             'nama_kotakab': sql_types.VARCHAR(100),
             'total_landmark': sql_types.INT
         })
-
-        st.success(f"Tabel rekap berhasil diperbarui untuk {nama_kotakab} (Total Landmark: {total_landmark})")
-    
     except Exception as e:
         st.error(f"Gagal memperbarui rekap_total_landmark untuk {nama_kotakab}: {e}")
 
