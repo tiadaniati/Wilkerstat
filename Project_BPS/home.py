@@ -179,8 +179,8 @@ try:
     for kota in list_kota:
         nama_tabel = nama_tabel_db(kota)
         try:
-            df_kota = conn_st.query(f"SELECT total_landmark FROM {nama_tabel};", ttl=600)
-            total = df_kota['total_landmark'].sum()
+            df_kota = conn_st.query(f"SELECT `Total Landmark` FROM {nama_tabel};", ttl=600)
+            total = df_kota['Total Landmark'].sum()
             landmark_dict[kota] = total
         except Exception as e:
             st.warning(f"Tabel '{nama_tabel}' tidak ditemukan: {e}")
