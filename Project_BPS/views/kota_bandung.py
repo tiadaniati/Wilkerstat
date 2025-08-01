@@ -281,56 +281,57 @@ else:
 
 st.title("Database Kota Bandung")
 
-# 1. Salin data dan normalisasi kode
 df_ref = df_csv.copy()
-for kolom in ['idsubsls', 'iddesa', 'kdprov', 'kdkab', 'kdkec', 'kddesa', 'kdsls']:
+
+kolom_kode = ['idsubsls', 'iddesa', 'kdprov', 'kdkab', 'kdkec', 'kddesa', 'kdsls']
+for kolom in kolom_kode:
     if kolom in df_ref.columns:
         df_ref[kolom] = df_ref[kolom].astype(str)
+        
+for kolom in ['kdkec', 'kddesa']:
+    df_ref[kolom] = df_ref[kolom].str.zfill(3)
 
-df_ref['kdkec'] = df_ref['kdkec'].str.zfill(3)
-df_ref['kddesa'] = df_ref['kddesa'].str.zfill(3)
-df_ref['kdsls'] = df_ref['kdsls'].str.zfill(4)
+for kolom in ['kdsls']:
+    df_ref[kolom] = df_ref[kolom].str.zfill(4)
 
-# 2. Rename dulu buat join
-df_ref = df_ref.rename(columns={
-    'idsls': 'Kode Wilayah SLS', 'iddesa' : 'Kode Wilayah Desa', 'kdprov': 'Kode Provinsi', 
-    'nmprov': 'Nama Provinsi', 'kdkab': 'Kode Kabupaten/Kota', 'nmkab': 'Nama Kabupaten/Kota', 
-    'kdkec': 'Kode Kecamatan', 'nmkec': 'Nama Kecamatan', 'kddesa': 'Kode Desa', 
-    'nmdesa': 'Nama Desa', 'kdsls': 'Kode SLS', 'nama_sls': 'Nama SLS', 
-    'petugas_kode': 'Kode Petugas', 'petugas_nama': 'Nama Petugas', 
-    'pengawas_kode': 'Kode Pengawas', 'pengawas_nama': 'Nama Pengawas'
-})
+try:
+    df_ref.to_sql("kota_bandung", con=conn_st.engine, if_exists="replace", index=False, dtype={
+        'idsls': sql_types.VARCHAR(20), 'iddesa': sql_types.VARCHAR(20), 'kdprov': sql_types.VARCHAR(10),
+        'nmprov': sql_types.VARCHAR(100), 'kdkab': sql_types.VARCHAR(10), 'nmkab': sql_types.VARCHAR(100),
+        'kdkec': sql_types.VARCHAR(10), 'nmkec': sql_types.VARCHAR(100), 'kddesa': sql_types.VARCHAR(10),
+        'nmdesa': sql_types.VARCHAR(100), 'kdsls': sql_types.VARCHAR(10), 'nama_sls': sql_types.VARCHAR(100),
+        'petugas_kode': sql_types.VARCHAR(100), 'petugas_nama': sql_types.VARCHAR(100), 'pengawas_kode': sql_types.VARCHAR(100), 
+        'pengawas_nama': sql_types.VARCHAR(100), 'nama_ketua': sql_types.VARCHAR(100), 'total_landmark': sql_types.INT()
+    })
 
-# 3. Join dengan landmark
-for col in ['Kode Wilayah Desa', 'Nama SLS']:
-    df_ref[col] = df_ref[col].astype(str).str.strip()
-    landmark[col] = landmark[col].astype(str).str.strip()
+except Exception as e:
+    st.warning(f"Gagal me-refresh data 'kota_bandung' di DB: {e}")
 
-df_merged = pd.merge(df_ref, landmark, on=['Kode Wilayah Desa', 'Nama SLS'], how='left')
-df_merged['Total Landmark'] = df_merged['total_landmark'].fillna(0).astype(int)
-df_merged.drop(columns=['total_landmark'], inplace=True)
+try:
+    df = conn_st.query("SELECT * FROM kota_bandung;", ttl=600)
+    
+    rename_mapping = {
+        'idsls': 'Kode Wilayah SLS', 'iddesa' : 'Kode Wilayah Desa', 'kdprov': 'Kode Provinsi', 
+        'nmprov': 'Nama Provinsi', 'kdkab': 'Kode Kabupaten/Kota', 'nmkab': 'Nama Kabupaten/Kota', 
+        'kdkec': 'Kode Kecamatan', 'nmkec': 'Nama Kecamatan', 'kddesa': 'Kode Desa', 
+        'nmdesa': 'Nama Desa', 'kdsls': 'Kode SLS', 'nama_sls': 'Nama SLS', 'petugas_kode' : 'Kode Petugas',
+        'petugas_nama': 'Nama Petugas', 'pengawas_kode': 'Kode Pengawas', 'pengawas_nama': 'Nama Pengawas'
+    }
+    df = df.rename(columns=rename_mapping)
+except Exception as e:
+    st.error(f"Gagal mengambil data 'kota_bandung' dari DB: {e}")
 
-# 4. Rename kembali kolom ke format database untuk simpan
-df_to_save = df_merged.rename(columns={
-    'Kode Wilayah SLS': 'idsls', 'Kode Wilayah Desa': 'iddesa', 'Kode Provinsi': 'kdprov', 
-    'Nama Provinsi': 'nmprov', 'Kode Kabupaten/Kota': 'kdkab', 'Nama Kabupaten/Kota': 'nmkab', 
-    'Kode Kecamatan': 'kdkec', 'Nama Kecamatan': 'nmkec', 'Kode Desa': 'kddesa', 
-    'Nama Desa': 'nmdesa', 'Kode SLS': 'kdsls', 'Nama SLS': 'nama_sls', 
-    'Kode Petugas': 'petugas_kode', 'Nama Petugas': 'petugas_nama', 
-    'Kode Pengawas': 'pengawas_kode', 'Nama Pengawas': 'pengawas_nama', 
-    'Total Landmark': 'total_landmark'
-})
+df['Kode Wilayah Desa'] = df['Kode Wilayah Desa'].astype(str)
+landmark['Kode Wilayah Desa'] = landmark['Kode Wilayah Desa'].astype(str)
 
-# 5. Simpan ke SQL
-df_to_save.to_sql("kota_bandung", con=conn_st.engine, if_exists="replace", index=False, dtype={
-    'idsls': sql_types.VARCHAR(20), 'iddesa': sql_types.VARCHAR(20), 'kdprov': sql_types.VARCHAR(10),
-    'nmprov': sql_types.VARCHAR(100), 'kdkab': sql_types.VARCHAR(10), 'nmkab': sql_types.VARCHAR(100),
-    'kdkec': sql_types.VARCHAR(10), 'nmkec': sql_types.VARCHAR(100), 'kddesa': sql_types.VARCHAR(10),
-    'nmdesa': sql_types.VARCHAR(100), 'kdsls': sql_types.VARCHAR(10), 'nama_sls': sql_types.VARCHAR(100),
-    'petugas_kode': sql_types.VARCHAR(100), 'petugas_nama': sql_types.VARCHAR(100), 
-    'pengawas_kode': sql_types.VARCHAR(100), 'pengawas_nama': sql_types.VARCHAR(100), 
-    'total_landmark': sql_types.INT()
-})
+df_merged = pd.merge(df, landmark, on=['Kode Wilayah Desa', 'Nama SLS'], how='left')
+df_merged['total_landmark'] = df_merged['total_landmark'].fillna(0)
+df_merged = df_merged.rename(columns={'total_landmark':'Total Landmark'})
+
+df_merged['Kecamatan'] = ' [' + df_merged['Kode Kecamatan'].astype(str) + ']' + ' '+ df_merged['Nama Kecamatan'].astype(str)
+df_merged['Kabupaten/Kota'] = ' [' + df_merged['Kode Kabupaten/Kota'].astype(str) + ']'+ ' '+ df_merged['Nama Kabupaten/Kota'].astype(str)
+df_merged['Desa'] = ' [' + df_merged['Kode Desa'].astype(str) + ']' + ' '+ df_merged['Nama Desa'].astype(str) 
+df_merged['SLS'] = '[' + df_merged['Kode SLS'].astype(str) + ']' + ' ' + df_merged['Nama SLS'].astype(str)
 
 
 st.subheader("Filter Data")
