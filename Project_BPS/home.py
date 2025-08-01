@@ -134,40 +134,61 @@ with kanan:
 #======================================================================================================
 st.title("Database Provinsi Jawa Barat")
 
-try:
-    df_prov.to_sql("data_provinsi", con=conn_st.engine, if_exists="replace", index=False, dtype={
-        'kode_kotakab': sql_types.VARCHAR(100),
-        'nama_kotakab': sql_types.VARCHAR(100),
-        'jumlah_kec': sql_types.INT,
-        'jumlah_desa': sql_types.INT
-    })
-  
-except Exception as e:
-    st.warning(f"Gagal mengunggah data referensi ke database: {e}")
-try:
-    df_from_db = conn_st.query("SELECT * FROM data_provinsi", ttl=600)
+
+def nama_tabel_db(nama_kotakab):
+    nama = nama_kotakab.lower().strip()
     
-    rename_mapping = {
-        'kode_kotakab': 'Kode Kabupaten/Kota', 
-        'nama_kotakab': 'Nama Kabupaten/Kota', 
-        'jumlah_kec': 'Jumlah Kecamatan', 
-        'jumlah_desa': 'Jumlah Desa' 
-    }
-    df_from_db = df_from_db.rename(columns=rename_mapping)
-
-    filter_columns = ['Kode Kabupaten/Kota', 'Nama Kabupaten/Kota']
-    cols = st.columns(len(filter_columns))  
+    if nama.startswith("kabupaten"):
+        nama = nama.replace("kabupaten", "").strip()
+        nama = "kab_" + nama.replace(" ", "")
+    elif nama.startswith("kota"):
+        nama = nama.replace("kota", "").strip()
+        nama = "kota_" + nama.replace(" ", "")
+    else:
+        nama = nama.replace(" ", "_")
     
-    filtered_df = df_from_db.copy()
+    return nama
 
-    for i, col_name in enumerate(filter_columns):
-        with cols[i]:
-            options = ['Semua'] + sorted(filtered_df[col_name].dropna().unique().tolist())
-            selected = st.selectbox(f"Filter berdasarkan {col_name}", options, key=f"filter_{col_name}")
-            if selected != 'Semua':
-                filtered_df = filtered_df[filtered_df[col_name] == selected]
+df_from_db = conn_st.query("SELECT * FROM data_provinsi", ttl=600)
 
-    st.dataframe(filtered_df)
+rename_mapping = {
+    'kode_kotakab': 'Kode Kabupaten/Kota', 
+    'nama_kotakab': 'Nama Kabupaten/Kota', 
+    'jumlah_kec': 'Jumlah Kecamatan', 
+    'jumlah_desa': 'Jumlah Desa' 
+}
+df_from_db = df_from_db.rename(columns=rename_mapping)
 
+# 2. Ambil list nama kabupaten/kota
+list_kota = df_from_db['Nama Kabupaten/Kota'].tolist()
+
+# 3. Buat dictionary untuk simpan total landmark
+landmark_dict = {}
+
+for kota in list_kota:
+    nama_tabel = nama_tabel_db(kota)
+    
+    try:
+        # Query data dari masing-masing tabel
+        df_kota = conn_st.query(f"SELECT total_landmark FROM {nama_tabel};", ttl=600)
+        
+        # Hitung total landmark di kota tersebut
+        total_landmark = df_kota['total_landmark'].sum()
+        landmark_dict[kota] = total_landmark
+        
+    except Exception as e:
+        st.warning(f"Tabel '{nama_tabel}' gagal dibuka atau tidak ditemukan: {e}")
+        landmark_dict[kota] = 0  # Jika error, anggap 0
+
+# 4. Buat DataFrame dari hasil landmark
+df_landmark_total = pd.DataFrame(list(landmark_dict.items()), columns=['Nama Kabupaten/Kota', 'Total Landmark'])
+
+# 5. Gabungkan ke df_from_db
+df_final = pd.merge(df_from_db, df_landmark_total, on='Nama Kabupaten/Kota', how='left')
+
+# 6. Update kembali ke database utama
+try:
+    df_final.to_sql("data_provinsi", con=conn_st.engine, if_exists="replace", index=False)
+    st.success("Kolom 'Total Landmark' berhasil ditambahkan ke data_provinsi.")
 except Exception as e:
-    st.error(f"Gagal mengambil atau memfilter data dari database: {e}")
+    st.error(f"Gagal menyimpan update ke data_provinsi: {e}")
