@@ -8,6 +8,7 @@ import random
 from streamlit_folium import folium_static
 import mysql.connector
 from sqlalchemy import create_engine, types as sql_types
+from sqlalchemy import inspect
 from folium.plugins import MarkerCluster
 
 # --- PAGE CONFIGURATION ---
