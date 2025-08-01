@@ -372,7 +372,7 @@ def update_rekap_total_landmark(df_merged, nama_kotakab, conn_engine):
     except Exception as e:
         st.error(f"Gagal memperbarui rekap_total_landmark untuk {nama_kotakab}: {e}")
 
-update_rekap_total_landmark(df_merged, "Kabupaten Bandung", conn_st.engine)
+update_rekap_total_landmark(df_merged, "Kabupaten Sukabumi", conn_st.engine)
 
 st.subheader("Filter Data")
 col11, col22, col33, col44 = st.columns(4)
