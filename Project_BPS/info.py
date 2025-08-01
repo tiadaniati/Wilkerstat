@@ -60,6 +60,8 @@ with tab_dashboard:
     
     st.subheader("2. Unggah File Data :")
     st.markdown("""
+        ☞ Isi label username dan password untuk login.\n
+        ☞ Klik tombol "Login".\n
         ☞ Klik tombol "Browse Files".\n
         ☞ Pilih file CSV dari komputer Anda.
     """)
