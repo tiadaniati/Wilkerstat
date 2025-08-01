@@ -8,6 +8,7 @@ import random
 from streamlit_folium import folium_static
 import mysql.connector
 from sqlalchemy import create_engine, types as sql_types
+from sqlalchemy import inspect
 from folium.plugins import MarkerCluster
 
 # --- PAGE CONFIGURATION ---
@@ -338,6 +339,36 @@ df_merged['Kecamatan'] = ' [' + df_merged['Kode Kecamatan'].astype(str) + ']' + 
 df_merged['Kabupaten/Kota'] = ' [' + df_merged['Kode Kabupaten/Kota'].astype(str) + ']'+ ' '+ df_merged['Nama Kabupaten/Kota'].astype(str)
 df_merged['Desa'] = ' [' + df_merged['Kode Desa'].astype(str) + ']' + ' '+ df_merged['Nama Desa'].astype(str) 
 df_merged['SLS'] = '[' + df_merged['Kode SLS'].astype(str) + ']' + ' ' + df_merged['Nama SLS'].astype(str)
+
+def update_rekap_total_landmark(df_merged, nama_kotakab, conn_engine):
+    try:
+        total_landmark = df_merged['Total Landmark'].sum()
+
+        df_current = pd.DataFrame([{
+            'nama_kotakab': nama_kotakab,
+            'total_landmark': int(total_landmark)
+        }])
+
+        inspector = inspect(conn_engine)
+        tables = inspector.get_table_names()
+
+        if 'rekap_total_landmark' in tables:
+            query = "SELECT * FROM rekap_total_landmark"
+            df_existing = pd.read_sql(query, conn_engine)
+
+            df_final = pd.concat([df_existing, df_current], ignore_index=True)
+            df_final = df_final.drop_duplicates(subset=['nama_kotakab'], keep='last')
+        else:
+            df_final = df_current
+
+        df_final.to_sql('rekap_total_landmark', con=conn_engine, if_exists='replace', index=False, dtype={
+            'nama_kotakab': sql_types.VARCHAR(100),
+            'total_landmark': sql_types.INT
+        })
+    except Exception as e:
+        st.error(f"Gagal memperbarui rekap_total_landmark untuk {nama_kotakab}: {e}")
+
+update_rekap_total_landmark(df_merged, "Kabupaten Sumedang", conn_st.engine)
 
 st.subheader("Filter Data")
 col11, col22, col33, col44 = st.columns(4)
