@@ -9,6 +9,7 @@ import random
 import plotly.express as px
 from PIL import Image
 from sqlalchemy import types as sql_types
+from sqlalchemy import inspect
 
 warnings.filterwarnings("ignore")
 
