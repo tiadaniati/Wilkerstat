@@ -294,7 +294,10 @@ kolom_kode = ['idsubsls', 'iddesa', 'kdprov', 'kdkab', 'kdkec', 'kddesa', 'kdsls
 for kolom in kolom_kode:
     if kolom in df_ref.columns:
         df_ref[kolom] = df_ref[kolom].astype(str)
-        
+
+for kolom in ['kdkab']:
+    df_ref[kolom] = df_ref[kolom].str.zfill(2)
+    
 for kolom in ['kdkec', 'kddesa']:
     df_ref[kolom] = df_ref[kolom].str.zfill(3)
 
