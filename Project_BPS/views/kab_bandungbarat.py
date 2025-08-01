@@ -283,6 +283,8 @@ else:
 st.title("Database Kabupaten Bandung Barat")
 
 df_ref = df_bandungbrt_csv.copy()
+df_ref['petugas_kode'] = df_ref['petugas_kode'].astype(float).astype(int).astype(str)
+df_ref['pengawas_kode'] = df_ref['pengawas_kode'].astype(float).astype(int).astype(str)
 
 kolom_kode = ['idsubsls', 'iddesa', 'kdprov', 'kdkab', 'kdkec', 'kddesa', 'kdsls']
 for kolom in kolom_kode:
