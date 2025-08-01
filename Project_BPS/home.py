@@ -156,6 +156,11 @@ try:
     }
     df_from_db = df_from_db.rename(columns=rename_mapping)
 
+    df_landmark = conn_st.query("SELECT * FROM rekap_total_landmark", ttl=600)
+    df_landmark = df_landmark.rename(columns={'nama_kotakab': 'Nama Kabupaten/Kota', 'total_landmark': 'Total Landmark'})
+    df_from_db = df_from_db.merge(df_landmark, on='Nama Kabupaten/Kota', how='left')
+    df_from_db['Total Landmark'] = df_from_db['Total Landmark'].fillna(0).astype(int)
+
     filter_columns = ['Kode Kabupaten/Kota', 'Nama Kabupaten/Kota']
     cols = st.columns(len(filter_columns))  
     
